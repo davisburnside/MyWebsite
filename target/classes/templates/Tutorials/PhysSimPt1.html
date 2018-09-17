@@ -1,0 +1,1399 @@
+<div th:id="${tutorialId}" class="contentContainer stripedBorder">
+    
+	<div id="articleContent">
+	  	   
+	    <!--Header-->
+	    <p class="singleElement head">
+		Physics-based 2D game in Java, Pt 1
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		When it comes to learning a new skill, 
+		I've found the best way to master it is to turn it into a game. 
+		When I was first learning programming, I was bored 
+		to my core with lessons concerning data structures, syntax, 
+		logic statements, and all other kinds of screengarble. 
+		Sure, I learned how to print a statement; to load a file, to 
+		animate a button-press... but I didn't see the true value 
+		in those skills until I could use them to make something 
+		<span class='italics'>fun</span>
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		In this lesson, we will make a simple physics game to 
+		demonstrate many of the basic features of programming, and 
+		how those features can combine to create interesting and 
+		<span class='italics'>fun</span> results. Instead of showing every class 
+		in it's entirety at first, I will build the program in sections and 
+		explain their purpose.
+
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		This is what the final result will look like. You control the 
+		green ball, and your goal is to put in entirely in the grey area. 
+		Clicking on the screen throws the ball toward your mouse. 
+		Clicking also resets the game after you make a goal.
+	    </p>
+
+	    <!--Image-->
+	    <div class="singleElement imageContainer medImage">
+		<img src="" 
+		     th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic_0.gif' }"
+		     class="img-fluid lazy"></img>
+		<p> Like basketball, but not really</p>
+	    </div>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		You will probably want to use an IDE to build the program. My 
+		favorite is NetBeans, which I will be using for future 
+		posts.
+	    </p>
+
+	    <!--Link-->
+	    <a class="singleElement link mouseoverHighlight1" 
+	       href='https://netbeans.org/' 
+	       target="_blank">
+		<img src="../../images/External/netbeansLogo.png">   
+		<span> Netbeans IDE Website  </span>
+	    </a>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		You'll also need the Java Development
+		Kit (JDK) installed on your computer. If you have programmed in Java before, 
+		you probably already have it.
+	    </p>
+	    
+	    <!--Link-->
+	    <a class="singleElement link mouseoverHighlight1" 
+	       href='http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html' 
+	       target="_blank">
+		<img src="../../images/External/javaLogo.png">   
+		<span> Java 8 Development Kit </span>
+	    </a>
+
+	    <!--Seperator-->
+	    <div class="singleElement sep"></div>
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		Program structure
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		When I talk about the <span class="bold">Structure</span> of a program, I mean the 
+		complex relationship between the various chunks of code that make 
+		it up. Which classes own instances of other classes? Which classes 
+		contain which methods, and when are those methods called? Should a 
+		piece of data be held locally inside a sorted array, or should it be 
+		on an external database that my program reaches out to? 
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		These questions have different answers depending on what your 
+		program will need to do, and how it will need to grow. Ideally, 
+		you want the program to execute as little code as possible, to 
+		load the smallest possible amount of data from the HD / Network, 
+		and of course to be as simple as possible to write.
+	    </p>
+
+	    <!--Image-->
+	    <div class="singleElement imageContainer bigImage">
+		<img src="" 
+		     th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic1.png' }"
+		     class="img-fluid lazy"></img>
+		<p>  Structure Chart like these are commonly used to represent the 
+		    <span class="bold">purpose</span> of distinct parts of code, as 
+		    well as the <span class="bold">relationship</span> to other parts of code.</p>
+	    </div>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		The example above is a demonstration of how a 
+		business-management program might operate. The box 
+		“Print Check” might represent a single method, a class, an 
+		entire program, or something in-between. It receives “Payroll Check Data” 
+		and returns “Check Printed” data- how that data is formatted is up to the coder.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Our PhysicsSim has fewer capabilities, and will therefor require a simpler 
+		structure. It is made of four classes-
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		<span class="tab"></span>
+		<span class="bold">GameController</span> is the class that manages the overall program. 
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		<span class="tab"></span>
+		<span class="bold">GameCanvas</span> is responsible for displaying the game's current status.  
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		<span class="tab"></span>
+		<span class="bold">Ball</span> only holds variables relating to itself.  
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		<span class="tab"></span>
+		<span class="bold">Target</span> also only holds variables relating to itself.   
+	    </p>
+	    
+	    <!--Seperator-->
+	    <div class="singleElement sep"></div>
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		Initial setup
+	    </p>
+	    
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Create a new project in your IDE of choice. Download the images below and place them
+		in the same directory as your code files.
+	    </p>
+	    
+	    <!--Link-->
+	    <a class="singleElement link mouseoverHighlight1" 
+	       href='/downloadFile/physSimPt1Images'>
+		<img src="../../images/External/downloadArrow.png">   
+		<span> Download images only </span>
+	    </a>
+
+	     <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		We will be building the project by introducing code files and gradually modifying them.
+		If instead you want the finished code, you can download the images and code files below
+	    </p>
+	    
+	    <!--Link-->
+	    <a class="singleElement link mouseoverHighlight1" 
+	       href='/downloadFile/physSimPt1All'>
+		<img src="../../images/External/downloadArrow.png">   
+		<span> Download finished code and images </span>
+	    </a>
+	
+	    <!--Seperator-->
+	    <div class="singleElement sep"></div>
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		Creating the interface
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		When making a program that requires visual interaction, I usually 
+		find it easier to shape the interface first, then design the 
+		program around it. Like any other computer game, Our program 
+		will need a window to display what's happening, will need to 
+		accept interaction from the user, and will need to show updates 
+		at a constant rate. I'll use Jframe to create the window and Jcomponent to display 
+		the changes to the User. Jframe and Jcomponent are just two 
+		of the many classes used by Java to create robust interfaces. 
+		If you've ever used a program written in Java, chances are you 
+		have interacted with a Jframe, Jbutton, Jlabel, Etc.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Let's get started. Open a new project in your IDE and create a 
+		new class called <span class="bold">GameController</span>, and add to it the code below. 
+	    </p>
+	    
+	    	    <!--Code-->
+	    <div id="code0_h" class="codeHead">
+		<button
+		    id="code0_b0"
+		    onclick="hideOrShowCode('code0', 'code0_h', 'code0_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    create <span>GameController.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code0" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.TimerTask;
+import javax.swing.JFrame;
+import static java.lang.Math.abs;
+
+public class GameController extends JFrame {
+
+    boolean runGame = true;
+    int boardSize_X = 600;
+    int boardSize_Y = 600;
+    final long cycleRate = 60;
+    static java.util.Timer timer = new java.util.Timer();
+    private GameCanvas gameCanvas = new GameCanvas();
+
+
+    GameController() {
+
+	super();
+	this.setSize(boardSize_X, boardSize_Y + 30);
+	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	this.setVisible(true);
+	this.setResizable(false);
+	
+	gameCanvas.setBounds(0, 0, boardSize_X, boardSize_Y);
+	add(gameCanvas);
+
+	TimerTask timerTask = new TimerTask() {
+
+	    public void run() {
+		
+	    }
+	};
+	timer.schedule(timerTask, 0, 1000 / cycleRate);
+    }
+
+    public static void main(String[] args) {
+	new GameController();
+    }
+}
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		The <span class="bold">GameController</span> class is a child 
+		of the <span class="bold">JFrame</span> class, so it will have 
+		access to all of JFrame's handy GUI-handling code.  
+		GameController class has the main() method needed by Java, 
+		as well as a constructor that sets up the window for initial use. 
+		Also inside the initial setup for the timer. It does not do 
+		anything yet- we will populate it later.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		The <span class="bold">runGame</span> variable will be used 
+		to determine if the game loop 
+		should keep running. It is set to false when 
+		the player makes a goal, and reset to true when 
+		the mouse is clicked again.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		The <span class="bold">boardSize</span> variables 
+		set the fixed size of our window and are used later 
+		in collision detection to determine the bounds of the pay area.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		<span class="bold">cycleRate</span> is used to set the number of 
+		frames per second. Every frame, 3 things will happen: The program 
+		will check if the game is running with the runGame boolean, the 
+		positions of the Ball and Target will update, and the GameCanvas 
+		will redraw the Ball and Target at their new positions. 
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		The <span class="bold">GameCanvas</span> class is a 
+		child of <span class="bold">JComponent</span>, 
+		just like how the GameController is a child of JFrame. JComponents, held 
+		inside JFrames, makes it very easy for the programmer
+		to display / interact with windowed Java applications. 
+		JButton, JTextfield, and dozens of J-other-things 
+		are children of the JComponent class. 
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		The <span class="bold">timer</span> is used to allow the physics calculations and 
+		screen rendering to take place at a fixed pace.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Next, let's create the GameCanvas class.
+	    </p>
+
+	    	    <!--Code-->
+	    <div id="code1_h" class="codeHead">
+		<button
+		    id="code1_b0"
+		    onclick="hideOrShowCode('code1', 'code1_h', 'code1_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    create <span>GameCanvas.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code1" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+	    
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.net.URL;
+import javax.imageio.ImageIO;
+import javax.swing.JComponent;
+
+class GameCanvas extends JComponent {
+
+    Graphics2D g2;
+    BufferedImage ballImage;
+
+    @Override
+    public void paintComponent(Graphics g) {
+
+	g2 = (Graphics2D) g;	
+
+	g2.setColor(new Color(220, 230, 230));
+	g2.fill(new Rectangle2D.Double(
+		0,
+		0,
+		this.getWidth(),
+		this.getHeight()));
+
+	Shape border = new Rectangle2D.Double(
+		2,
+		2,
+		this.getWidth() - 4,
+		this.getHeight() - 4);
+	g2.setColor(Color.DARK_GRAY);
+	g2.draw(border);	
+    }
+}	    
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		The <span class="bold">GameCanvas</span> class starts off with ownership of two 
+		objects- a <span class="bold">Graphics2D</span> object (g2) 
+		and a <span class="bold">BufferedImage</span> (ballImage). g2 is 
+		used by the paintComponent method to draw 
+		the various shapes and images that the game needs. 
+		BallImage will later be used to hold a reference to the 
+		ball's image, which the program needs to first load from the hard drive.
+	    </p>
+
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		The <span class="bold">paintComponent</span> method is key here. 
+		This method is already defined by the JComponent class, which is 
+		why we need the <span class="bold">@Override</span> annotation 
+		before the method declaration. Every time the <span class="bold">repaint()</span>
+		method is called on a <span class="bold">Jframe</span> object, 
+		all the JComponents inside the JFrame have their respective
+		<span class="bold">paintComponent</span> method executed 
+		(unless the programmer specifies otherwise).
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Let's run the program and check the result. Not much to see, but it gives our
+		work a checkpoint.
+	    </p>
+
+	    <!--Image-->
+	    <div class="singleElement imageContainer smallImage">
+		<img src="" 
+		     th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic2.png' }"
+		     class="img-fluid lazy"
+		     ></img>
+		<p>The blue background and thin black border defined in the GameCanvas lets us know that 
+		    the GameCanvas was successfully added to it's containing GameController</p>
+	    </div>
+
+	    <!--Seperator-->
+	    <div class="singleElement sep"></div>
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		Adding a little bit of life
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Despite it's minimalist charm, users will 
+		quickly get bored with a blank window. Let's first 
+		create the <span class="bold">Ball</span> class- what 
+		the user will be directly controlling. 
+	    </p>
+
+	    	    	    <!--Code-->
+	    <div id="code2_h" class="codeHead">
+		<button
+		    id="code2_b0"
+		    onclick="hideOrShowCode('code2', 'code2_h', 'code2_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    create <span>Ball.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code2" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+ 
+public class Ball {
+
+    double xPosition = 0;
+    double yPosition = 0;
+
+    double xVelocity = 0;
+    double yVelocity = 0;
+
+    final double bounciness= .8;
+    
+    final double friction = 0;
+    
+    int size;
+}
+	    </pre> 
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Every timer tick, the <span class="bold">position </span>
+		and <span class="bold">velocity </span>
+		variables will be first manipulated by the GameController, then 
+		used by the GameCanvas to display the objects. Note 
+		that the X and Y components are seperate variables. This is not 
+		important, and there are several different data structures 
+		that we could have used to store this information 
+		(an double[] array, a Point() object...) It's only 
+		made this way for better clarity.
+
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Bounciness and friction are never changed by the program,
+		which is why they have the final attribute. 
+		<span class="bold">bounciness</span> is used to determine 
+		how much velocity the ball should retain when it collides with a 
+		wall, <span class="bold">friction</span> is really “air-friction”, or
+		how quickly the ball naturally loses velocity. 
+		<span class="bold">size</span> is used by the physics 
+		calculations and by the GameCanvas
+	    </p>
+
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Now create the <span class="bold">Target</span> class. Since it extends Ball, 
+		the Target class will also have a position, 
+		velocity, and size. It won't be 
+		affected by friction or wall collisions, so we can 
+		just ignore the bounciness and friction variables.
+		The Target only has one unique variable, 
+		<span class="bold">accelerationModifier</span>, which controls
+		how fast it oscillates.
+	    </p>
+
+	    	    <!--Code-->
+	    <div id="code3_h" class="codeHead">
+		<button
+		    id="code3_b0"
+		    onclick="hideOrShowCode('code3', 'code3_h', 'code3_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    create <span>Target.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code3" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+
+public class Target extends Ball {
+    
+    double accelerationModifier = 0.3;
+}
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Next, declare instances of the Ball and Target inside GameController.
+		You should place these declarations next to the other 6 objects/vars
+		the GameController owns.
+	    </p>
+
+	    	    	    <!--Code-->
+	    <div id="code4_h" class="codeHead">
+		<button
+		    id="code4_b0"
+		    onclick="hideOrShowCode('code4', 'code4_h', 'code4_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    add to <span>GameController.java</span>
+
+		</p>
+	    </div>
+	     
+			    <pre id="code4" class="singleElement code prettyprint linenums:16" style="padding-left: 0;">
+ static Ball mainBall;
+ static Target target;
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Why are the Ball and Target <span class="bold">static</span> 
+		objects, you might ask? If they were only ever used
+		inside this class (The class that owns them), they would not need to 
+		be static. But since the GameCanvas will 
+		need to know about them in order to draw them, and since GameCanvas 
+		does own have the declaration of Ball and Target,
+		GameCanvas needs some way of referencing them. 
+		There are several ways of letting that happen, 
+		each with pros and cons, but I won't get into it on this 
+		lesson. The takeaway is- allowing the Ball and Target to 
+		be static objects lets outside classes reference them.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Inside the <span class="bold">GameController's constructor</span> (the method with the same name 
+		as the class itself), add the initialization code for the Ball and Target.
+	    </p>
+
+	    	    	    <!--Code-->
+	    <div id="code5_h" class="codeHead">
+		<button
+		    id="code5_b0"
+		    onclick="hideOrShowCode('code5', 'code5_h', 'code5_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    add to <span>GameController.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code5" class="singleElement code prettyprint linenums:28" style="padding-left: 0;">
+mainBall = new Ball();
+mainBall.xPosition = 300;
+mainBall.yPosition = 300;
+mainBall.size = 50;
+	
+target = new Target();
+target.xPosition = 40;
+target.yPosition = 100;
+target.size = 70;
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">		
+		<span class="tab"></span>
+		The next chunk of code is a little heavy. Copy the entire 
+		<span class="bold">physicsCalculations()</span> method into 
+		the GameController class.
+	    </p>
+
+	    	    <!--Code-->
+	    <div id="code6_h" class="codeHead">
+		<button
+		    id="code6_b0"
+		    onclick="hideOrShowCode('code6', 'code6_h', 'code6_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    add to <span>GameController.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code6" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+private void physicsCalculations() {
+
+   // Section 1
+   if (target.xPosition &gt; boardSize_X / 2) {
+       target.xVelocity -= target.directionModifier;
+   } 
+   else if (target.xPosition &lt; boardSize_X / 2) {
+       target.xVelocity += target.directionModifier;
+   }
+   target.xPosition += target.xVelocity;
+
+   // Section 2
+   double gravityAcceleration = 0.5;
+
+   mainBall.yVelocity += gravityAcceleration;
+
+   // Section 3
+   mainBall.xVelocity *= 0.99;
+   mainBall.yVelocity *= 0.99;
+
+   // Section 4
+   int leftWall = 0;
+   int rightWall = boardSize_X;
+   int topWall = 0;
+   int bottomWall = boardSize_Y;
+   int ballRadius = mainBall.size / 2;
+   if (mainBall.xPosition - ballRadius &lt; leftWall) {
+
+       mainBall.xVelocity = abs(mainBall.xVelocity) * mainBall.bounciness;
+       mainBall.xPosition = leftWall + ballRadius;
+   }
+   if (mainBall.xPosition + ballRadius &gt; rightWall) {
+
+       mainBall.xVelocity = -abs(mainBall.xVelocity) * mainBall.bounciness;
+       mainBall.xPosition = rightWall - ballRadius;
+   }
+   if (mainBall.yPosition - ballRadius &lt; topWall) {
+
+       mainBall.yVelocity = abs(mainBall.yVelocity) * mainBall.bounciness;
+       mainBall.yPosition = topWall + ballRadius;
+   }
+   if (mainBall.yPosition + ballRadius &gt; bottomWall) {
+
+       mainBall.yVelocity = -abs(mainBall.yVelocity) * mainBall.bounciness;
+       mainBall.yPosition = bottomWall - ballRadius;
+   }
+
+   // Section 5
+   mainBall.xPosition += mainBall.xVelocity;
+   mainBall.yPosition += mainBall.yVelocity;
+}
+
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		In section <span class="bold">1</span>, the Target's horizontal 
+		velocity is either added or subtracted by the directionModifier 
+		value, depending on which half of the screen it is on. 
+		This is all we need to give it that sinusoidal motion.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		In section <span class="bold">2</span>, the Ball's velocity is subtracted by a fixed 
+		value, which simulates gravity.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		In section <span class="bold">3</span>, the Ball's velocity is multiplied by a value less than 1
+		to simulate air resistance. 
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		In section <span class="bold">4</span>, the 4 bounding wall's positions are defined, and 
+		then compared to the position of the ball. If the ball has moved 
+		outside the bounds, it is put backside and it's X or Y velocity 
+		will invert.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		In section <span class="bold">5</span>, the Ball's velocity is added to it's position.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Keep in mind that the units are measured in pixels, and that 
+		this process is taking place 60 times per second. Even a low 
+		velocity (less than 5) can move the ball quickly.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Next, we need to call the method we just created. Inside the 
+		<span class="bold">TimerTask</span> declaration, which is inside 
+		the GameController's Constructor, replace the 
+		empty <span class="bold">run()</span> method with-
+	    </p>
+
+	    	    <!--Code-->
+	    <div id="code7_h" class="codeHead">
+		<button
+		    id="code7_b0"
+		    onclick="hideOrShowCode('code7', 'code7_h', 'code7_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    add to <span>GameController.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code7" class="singleElement code prettyprint linenums:41" style="padding-left: 0;">
+public void run() {
+
+    if (runGame){
+
+	physicsCalculations();
+	repaint();
+    }
+}
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		The Ball is defined and simulated in the program. 
+		Next, we load the image file that represents it onscreen. 
+		Back inside <span class="bold">GameController's constructor</span>, add this line.
+	    </p>
+	    
+	    <!--<div class="scrollCheckpoint" id="test1"></div>-->
+
+	    	    <!--Code-->
+	    <div id="code8_h" class="codeHead">
+		<button
+		    id="code8_b0"
+		    onclick="hideOrShowCode('code8', 'code8_h', 'code8_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    add to <span>GameController.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code8" class="singleElement code prettyprint linenums:35" style="padding-left: 0;">
+gameCanvas.loadImages();
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Now create the method you just called. In <span class="bold">GameCanvas</span>, add this method.
+	    </p>
+
+	    	    <!--Code-->
+	    <div id="code9_h" class="codeHead">
+		<button
+		    id="code9_b0"
+		    onclick="hideOrShowCode('code9', 'code9_h', 'code9_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    add to <span>GameCanvas.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code9" class="singleElement code prettyprint linenums:40" style="padding-left: 0;">
+void loadImages() {
+
+    try {
+
+	URL url = this.getClass().getResource("Ball.png");
+	if (url != null) {
+	    ballImage = ImageIO.read(url);
+	}
+    } catch (Exception e) {
+	System.out.println("Failed to load ball Image");
+    }
+}	    
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Just one more thing to do before we can 
+		test again. Add this inside the <span class="bold">paintComponent</span> method. (Add it 
+		<span class="bold">below</span> the existing 
+		code that draws the border and background. Draw order is important)
+	    </p>
+	    
+	    <!--<div class="scrollCheckpoint" id="test2"></div>-->
+
+	    	    <!--Code-->
+	    <div id="code10_h" class="codeHead">
+		<button
+		    id="code10_b0"
+		    onclick="hideOrShowCode('code10', 'code10_h', 'code10_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    add to <span>GameCanvas.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code10" class="singleElement code prettyprint linenums:39" style="padding-left: 0;">
+// Section 1
+Ball ball = GameController.mainBall;
+Target target = GameController.target;
+
+// Section 2
+if (target != null) {
+    g2.setColor(Color.LIGHT_GRAY);
+    g2.fillArc(
+	    (int) (target.xPosition - (target.size) / 2),
+	    (int) (target.yPosition - (target.size) / 2),
+	    (int) target.size,
+	    (int) target.size,
+	    0,
+	    360);
+} else {
+    System.out.println("Target could not be referenced");
+}
+
+if (ball != null) {
+    if (ballImage != null) {
+
+	g2.drawImage(ballImage,
+		(int) (ball.xPosition - (ball.size / 2)),
+		(int) (ball.yPosition - (ball.size / 2)),
+		(int) ball.size,
+		(int) ball.size,
+		null);
+    } else {
+	Shape circle = new Ellipse2D.Double(
+		(int) (ball.xPosition - (ball.size / 2)),
+		(int) (ball.yPosition - (ball.size / 2)),
+		(int) ball.size,
+		(int) ball.size);
+	g2.fill(circle);
+    }
+} else {
+    System.out.println("Ball could not be referenced");
+}
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Section <span class="bold">1</span> defines the local definition of Ball and Target 
+		by reaching out to the <span class="bold">GameController Class's</span> static instance
+		of Ball and Target. Section <span class="bold">2</span> paints the 
+		Ball and Target objects to the screen.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Let's run the program and watch the physicsCalculations method in action.
+	    </p>
+	    
+	    <!--<div class="scrollCheckpoint" id="test3"></div>-->
+
+	    <!--Image-->
+	    <div class="singleElement imageContainer medImage">
+		<img src="" 
+		th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic4.gif' }"
+		class="img-fluid lazy"></img>
+	    </div>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		This is where the magic starts. Try changing the 
+		value of different variables, like gravity or friction or 
+		framerate. How else could the physicsCalculations 
+		method be changed to add cool new behavior?
+	    </p>
+
+	    <!--Seperator-->
+	    <div class="singleElement sep"></div>
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		Adding interaction
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		We just have a few more things to add before the game is complete. 
+		The most obvious thing we need is interaction. Since all 
+		game actions are controlled through a mouseclick, 
+		the code for interaction is pretty straightforward.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Interaction will be added through the  <span class="bold">MousListener</span> Interface.
+		<span class="bold">Listeners</span> are simply used to associate an <span class="bold">event</span> with 
+		a resulting <span class="bold">code execution</span>. The 
+		event might be a button-press in your GUI, the movement of a 
+		mouse, the press of a key on your keyboard. 
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Now we modify the GameController to <span class="bold">implement MouseListener</span>. Replace the 
+		<span class="bold">class declaration</span> with this.
+	    </p>
+
+	    	    <!--Code-->
+	    <div id="code11_h" class="codeHead">
+		<button
+		    id="code11_b0"
+		    onclick="hideOrShowCode('code11', 'code11_h', 'code11_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    replace inside <span>GameController.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code11" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+public class GameController extends JFrame implements MouseListener {
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Remember, MouseListener is an <span class="bold">interface</span>, not a 
+		<span class="bold">class</span>- other languages might treat interfaces 
+		differently; giving them different names or changing slightly 
+		how they are implemented / used. Apple's proprietary language,
+		Swift, calls them Protocols. 
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Anyway, now that GameController has the role of MouseListener, 
+		it is expected to have all the functionality of a 
+		MouseListener too. When the mouse is pressed, the 
+		program will call a method called <span class="bold">mousePressed</span> on 
+		all registered MouseListeners. That means we need to 
+		define several methods that the GameController is expected
+		by the program to have.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Put these methods inside the GameController.
+	    </p>
+
+	    	    <!--Code-->
+	    <div id="code12_h" class="codeHead">
+		<button
+		    id="code12_b0"
+		    onclick="hideOrShowCode('code12', 'code12_h', 'code12_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    add inside <span>GameController.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code12" class="singleElement code prettyprint linenums:80" style="padding-left: 0;">
+@Override public void mousePressed(MouseEvent e) {    
+
+    int clickX = e.getX();
+    int clickY = e.getY();
+    String clickLocation = clickX + ", " + clickY;
+    System.out.println("Mouse Pressed at " + clickLocation);
+}
+
+@Override public void mouseClicked(MouseEvent e) { }
+@Override public void mouseReleased(MouseEvent e) { }
+@Override public void mouseEntered(MouseEvent e) { }
+@Override public void mouseExited(MouseEvent e) { }
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Notice that all these methods but one are completely
+		empty. That's fine- we still include because they 
+		interface needs them to be there. The only one 
+		we will need is MousePressed.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		And we need to one more thing to enable functionality. 
+		Add this line inside the GameController's constructor. 
+		It will register the GameController as a MouseListener, 
+		so the Java Virtual Machine knows where to send MouseListener 
+		events.
+	    </p>
+
+	    	    <!--Code-->
+	    <div id="code13_h" class="codeHead">
+		<button
+		    id="code13_b0"
+		    onclick="hideOrShowCode('code13', 'code13_h', 'code13_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    add inside <span>GameController.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code13" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+this.addMouseListener(this);
+	    </pre>
+
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		If everything is configured right, you should see a message 
+		in the IDE's output console every time you click 
+		inside the program. If you are using Netbeans and 
+		don't see the console, you can view it from the menu bar:
+		Window → Output 
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Turning mouseclicks into functionality is simple. 
+		We already know the location of the click, as well as 
+		the location of the Ball, so we use this information to 
+		affect the Ball's velocity.
+		<br/><span class="tab"></span>
+		Replace them entire
+		<span class="bold">MousePressed</span> method with this.
+	    </p>
+
+	    	    <!--Code-->
+	    <div id="code14_h" class="codeHead">
+		<button
+		    id="code14_b0"
+		    onclick="hideOrShowCode('code14', 'code14_h', 'code14_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    replace inside <span>GameController.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code14" class="singleElement code prettyprint linenums:80" style="padding-left: 0;">
+@Override public void mousePressed(MouseEvent e) { 
+
+    if (runGame){
+
+	double distanceX = (float)e.getX() - mainBall.xPosition;
+	double distanceY = (float)e.getY() - mainBall.yPosition;
+
+	double pushX = distanceX / 10;
+	double pushY = distanceY / 10;
+
+	mainBall.xVelocity += pushX;
+	mainBall.yVelocity += pushY;
+    }
+    else{	
+	mainBall.xPosition = 300;
+	mainBall.yPosition = 300;
+	mainBall.xVelocity = 5;
+	mainBall.yVelocity = 0;
+	runGame = true;
+    }
+}	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Run the program again, and see if your clicks have an effect on the ball.
+	    </p>
+
+	    <!--Image-->
+	    <div class="singleElement imageContainer medImage">
+		<img src="" 
+		th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic5.gif' }"
+		class="img-fluid lazy"></img>
+	    </div>
+
+	    <!--Seperator-->
+	    <div class="singleElement sep"></div>
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		Finishing touches
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		The last thing to do is turn this interactive bouncing ball 
+		into a game. A game needs an immersive story, needs to give 
+		the player a sense of purpose, needs to have a memorable 
+		introduction and adrenaline-surged climactic ending.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Since we don't have any of those things, let's just try to throw the 
+		ball into the target. Add this method.
+	    </p>
+
+	    	    <!--Code-->
+	    <div id="code15_h" class="codeHead">
+		<button
+		    id="code15_b0"
+		    onclick="hideOrShowCode('code15', 'code15_h', 'code15_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    add to <span>GameController.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code15" class="singleElement code prettyprint linenums:114" style="padding-left: 0;">
+private boolean gameIsOver(){
+
+    double distanceThreshold = 15;
+
+    double distanceFromBallToGoal_X = mainBall.xPosition - target.xPosition;
+    double distanceFromBallToGoal_Y = mainBall.yPosition - target.yPosition;
+
+    double absoluteDistance = Math.sqrt((distanceFromBallToGoal_X * distanceFromBallToGoal_X)
+	    + (distanceFromBallToGoal_Y * distanceFromBallToGoal_Y));
+
+    if (absoluteDistance &lt; distanceThreshold)
+	return true;
+
+    return false;
+}
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		This method will be called every tick, just like the 
+		physicsCalculations method. If the ball is too far from the 
+		target, it returns <span class="bold">false</span>. If the ball is 
+		within the threshold, it returns <span class="bold">true</span>.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		One final piece of code to add, and the game is complete! Back 
+		inside <span class="bold">GameController's Contstructor's TimerTask</span>, 
+		replace the existing <span class="bold">run</span> method with this one.
+	    </p>
+
+	    	    <!--Code-->
+	    <div id="code16_h" class="codeHead">
+		<button
+		    id="code16_b0"
+		    onclick="hideOrShowCode('code16', 'code16_h', 'code16_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    add to <span>GameController.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code16" class="singleElement code prettyprint linenums:46" style="padding-left: 0;">
+public void run() {
+
+    if (runGame){
+
+	physicsCalculations();
+
+	if (gameIsOver())
+	    runGame = false;
+
+	repaint();
+    }
+}
+	    </pre>
+
+	    <!--Seperator-->
+	    <div class="singleElement sep"></div>
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		Conclusion
+	    </p>
+
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Things to note: Because the physics calculations are so 
+		crude, there are many capabilities they cannot handle.
+		The bounding container that the ball bounces around inside 
+		can only have a rectangular shape (think about how we check 
+		for collisions with walls). There is no code for the ball 
+		to collide with other objects: If we were to add another 
+		ball, they would pass right through each other. And the “ball”
+		is really treated more like a square by the physics method. 
+		It has no capability to roll or deform. 
+	    </p>
+
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Early in this post I talked about program structure. I 
+		feel like this is an under-emphasized topic in many programming 
+		lessons. As important as it is to know how to call a method, 
+		to find and fix bugs, to load and save files to storage- 
+		I feel like a good understanding of program structure is 
+		equally important. It's the difference between a sleek, 
+		efficient, modular program that even a beginner could learn 
+		to navigate... or a pile of enigmatic code spaghetti that 
+		requires a Ph.D in quantum surgery to understand.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		In the next post, I will explore an alternative way to build the PhysicsSim,
+		changing the structure and screen-rendering.
+	    </p>
+
+	    <!--Link-->
+	    <a class="singleElement link mouseoverHighlight1" 
+	       href='/Tutorials/PhysSimPt2'
+	       target="_blank">
+		<img src="../../images/Tutorials/PhysSimPt2/preview.png">   
+		<span> Physics-based 2D game in Java, Pt 2 </span>
+	    </a>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+	    </p>
+	    
+	    <div class="signature">
+		by Davis Burnside
+		<br/>
+		Posted Dec 19 2017
+	    </div>
+
+    </div>
+</div>

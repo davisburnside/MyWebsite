@@ -1,0 +1,1813 @@
+<div th:id="${tutorialId}" class="contentContainer stripedBorder">
+
+    <div id="articleContent">
+
+	<!--Header-->
+	<p class="singleElement head">
+	    Java Jams: Sin Waves, Streams, and Byte Buffers
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Let's play in some low-level 
+	    functionality of Java's audio. We will be
+	    working with <span class="bold">Buffers</span> and <span class="bold">Streams</span>. Using
+	    them can be more complicated than simply executing a 
+	    chunk of code, so before I dive into the details let me explain the concepts.
+
+	</p>
+
+
+	<p class="singleElement miniHead">
+	    Instant Data vs Streaming Data
+	</p>
+
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Most code is designed to execute <span class="bold">instantaneuosly</span>, or at 
+	    least as close as possible to it. Let's say you write a 
+	    method that finds the Least Common Denominator between 
+	    two integers. The <span class="bold">Data flow</span> of that method would
+	    be seamless- the time it takes to execute is almost 0, so you don't need to plan for
+	    delays in your code.
+	</p>
+
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Now imagine you write a method to get a 100-character String from a server, 
+	    but the server can only send 10 characters at a time. 
+	    What do? The server could send the String to you 
+	    in 10-char increments and your program could stitch
+	    the data back together, but your <span class="bold">getStringFromServer</span>
+	    method can't execute instantaneously anymore- so any other 
+	    code <span class="bold">in the same Thread as 
+		getStringFromServer</span> will be stalled.
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    A solution to this problem is to listen for that String data in a new <span class="bold">Thread</span>,
+	    so that other tasks (like allowing a responsive UI, doing background work, etc) can still go on.
+	    That <span class="bold">Stream</span> of data is read by the new Thread and stored continuously into a 
+	    <span class="bold">buffer</span>, which is 
+	    is just another name for an <span class="bold">Array</span>.
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Java has many classes that handle Streams of different types. 
+	    For the following 2 examples, I will use the 
+	    <span class="bold">FileInputStream</span> and <span class="bold">FileOutputStream </span> classes 
+	    included in the Java.IO framework, which allow 
+	    files to be read and written via
+	    <span class="bold">streams of data</span>.		
+	</p>
+
+
+	<!--Header-->
+	<p class="singleElement miniHead">
+	    Stream / Buffer Example 1
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+
+	    If you want a brief hands-on example, create a new Java project in your IDE.
+	    Create a class named <span class="bold">MyBufferedReader</span>, and in the same folder create 
+	    <span class="bold">input.txt</span>, then add to it this sentence and save it.
+	</p>
+
+	<pre class="singleElement code">
+I am a text file whose contents take up 49 bytes.
+	</pre>
+
+	<!--Code-->
+	<div id="code0_h" class="codeHead">
+	    <button
+		id="code0_b0"
+		onclick="hideOrShowCode('code0', 'code0_h', 'code0_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		copy entirety to <span>MyBufferedReader.java</span>
+	    </p>
+	</div>
+	<pre id="code0" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
+public class MyBufferedReader {
+
+    public static void main(String[] args) {
+	try {
+
+	    new MyBufferedReader();
+	} catch (Exception ex) {
+
+	    System.out.println(ex);
+	}
+    }
+
+    public BufferReader() throws IOException {
+
+	// Declare Stream
+	InputStream inputStream = null;
+
+	try {
+
+	    // initialize the Stream
+	    URL inputFileURL = this.getClass().getResource("input.txt");
+	    inputStream = new FileInputStream(inputFileURL.getFile());
+
+	    // A buffer that can store up to 16 bytes
+	    byte[] byteBuffer = new byte[16];
+
+	    while (true) {
+
+		int numBytesRead = inputStream.read(byteBuffer);
+		System.out.println("bytes read from inputStream: " + numBytesRead);
+
+		// If there is nothing left to read from the stream, exit the loop
+		if (numBytesRead == -1) {
+
+		    System.out.println("Nothing left to read");
+		    break;
+		}
+	    }
+	} finally {
+
+	    // Close streams
+	    if (inputStream != null) {
+
+		inputStream.close();
+	    }
+	}
+    }
+}</pre>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    First, the <span class="bold">main</span> method is the entry point of the code. 
+	    It creates a new MyBufferedReader object, which immediately calls the  
+	    MyBufferedReader <span class="bold">Constructor</span>.
+	</p>
+	<p class="singleElement para">
+	    <span class="tab"></span>
+
+	    In the <span class="bold">Constructor</span>, the InputStream is attempted
+	    to be initialized. If the file input.txt does not exist where the 
+	    program expects it to, the <span class="bold">try</span> block will fail and execution will 
+	    pass to the <span class="bold">finally</span>.
+	</p>
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    If the file exists, then a <span class="bold">buffer</span> is then 
+	    created that can store 16 bytes. Ordinarily, buffers have a 
+	    much bigger capacity than this- but for demonstration we will keep it small. 
+	</p>
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Next, the <span class="bold">while</span> loop begins executing. It
+	    might look dangerous to use <span class="bold">while(true)</span>, as it looks like it 
+	    will cause an infinite loop, but the <span class="bold">break</span> statement a few 
+	    lines down allows it to exit when needed.
+	</p>
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    The InputStream's <span class="bold">read</span> method returns how many bytes it has 
+	    read. It also stores all those bytes in the <span class="bold">byteBuffer</span>. But how 
+	    does the <span class="bold">read</span> method know which bytes to read? After all, 
+	    there are 49 bytes in the input file, and only this program 
+	    can only read 16 at a time? <span class="bold">By default</span>, InputStreams start 
+	    at the data's beginning and read <span class="bold">N</span> bytes. On the next call 
+	    to <span class="bold">read</span>, it picks up where the last call left off and reads
+	    the <span class="bold">next N</span> bytes. By the end each byte is read only once.
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Last, in the <span class="bold">finally</span> block, the InputStream is <span class="bold">closed</span>. 
+	    This is a very important task that
+	    is sometimes overlooked. In programming, any resource you 
+	    <span class="bold">open</span> needs to be <span class="bold">closed</span> when it
+	    is no longer needed. 
+	    <a href="http://illegalargumentexception.blogspot.com/2008/10/java-how-not-to-make-mess-of-stream.html">
+		This article does a great job of explaining why.</a>
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Look at the output of this program. The last statement says that the program read -1 bytes- huh?
+	    What this really means is that all bytes have been read, and the Stream is dry. This is how
+	    MyBufferedReader knows when to exit the <span class="bold">while(true)</span> loop.
+	</p>
+
+	<div class="singleElement imageContainer smallImage">
+	    <img src="" 
+		 th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic1.png' }"
+		 class="img-fluid lazy"></img>
+	</div>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Now change the size of the byte buffer to something more reasonable, like 1024 bytes (a common
+	    size for sending data over the internet, as you will be limited by how much data can fit into the 
+
+	    <a href="https://www.tutorialspoint.com/ipv4/ipv4_packet_structure.htm">
+		packets that bounce from router to router.</a> 
+	</p>
+
+	<!--Code-->
+	<div id="code1_h" class="codeHead">
+	    <button
+		id="code1_b0"
+		onclick="hideOrShowCode('code1', 'code1_h', 'code1_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		replace line 30 of <span>MyBufferedReader.java</span>
+	    </p>
+	</div>
+	<pre id="code1" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+byte[] byteBuffer = new byte[1024];
+	</pre>
+
+
+	<div class="singleElement imageContainer smallImage">
+	    <img src="" 
+		 th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic2.png' }"
+		 class="img-fluid lazy"></img>
+	    <p> The buffed-up buffer can easily stomach the file's 49 bytes without a 
+		a second read.</p>
+	</div>
+
+
+	<!--Header-->
+	<p class="singleElement miniHead">
+	    Stream / Buffer Example 2
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Now, let's actually do something with the bytes we read. By using an
+	    <span class="bold">OutputStream</span>, we can forward the recently-read bytes to a new file, 
+	    essentially turning the program into a file copier. 
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+
+	    First, create a new file in the same directory as the others, <span class="bold">output.txt</span>, and leave it blank
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+
+	    Next, replace the contents of <span class="bold">MyBufferReader</span> with this-
+	</p>
+
+	<!--Code-->
+	<div id="code2_h" class="codeHead">
+	    <button
+		id="code2_b0"
+		onclick="hideOrShowCode('code2', 'code2_h', 'code2_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		replace entirety of <span>MyBufferedReader.java</span>
+	    </p>
+	</div>
+	<pre id="code2" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+
+public class MyBufferedReader {
+
+    public static void main(String[] args) {
+		
+	try{
+	    
+	    new MyBufferedReader();
+	}
+	catch (IOException ex) {
+
+	    System.out.println(ex);
+	}   
+    }
+
+    public MyBufferedReader() throws IOException{
+	
+	// declare the Streams
+	InputStream inputStream = null;
+	OutputStream outputStream = null;
+
+	try {
+
+	    // initialize the Streams
+	    URL inputFileURL = this.getClass().getResource("arrow_x.wav");
+	    URL outputFileURL = this.getClass().getResource("output.txt");
+
+	    inputStream = new FileInputStream(inputFileURL.getFile());
+	    outputStream = new FileOutputStream(outputFileURL.getFile(), false);
+	    
+	    
+	    // A buffer that can store up to 1024 bytes
+	    byte[] byteBuffer = new byte[1024];
+	    
+	    while (true) {
+
+		// Read bytes and store them in byteBuffer
+		int numBytesRead = inputStream.read(byteBuffer);
+		System.out.println("bytes read from inputStream: " + numBytesRead);
+		
+		// If there is nothing left to read from the stream, exit the loop
+		if (numBytesRead == -1) {
+		    
+		    System.out.println("Nothing left to read");
+		    break;
+		}
+		
+		// Otherwise, write the bytes to output.txt
+		else{
+		    outputStream.write(byteBuffer);
+		    System.out.println("bytes written to outputStream: " + numBytesRead);
+		}
+	    }
+	    
+	} 
+	finally{
+	
+	    // Close streams
+	    if (inputStream != null){
+	    
+		inputStream.close();
+	    }
+	    if (outputStream != null){
+	    
+		outputStream.flush();
+		outputStream.close();
+	    }
+	}
+    }
+}
+	</pre>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Example 2 follows the same structure as example 1, but now includes
+	    a <span class="bold">FileOutputStream</span>. Inside the <span class="bold">while loop</span>, you can see 
+	    that writing to a buffer and reading from a buffer are handled similarly.  
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+
+	    <span class="bold">FileOutputStream</span> handles that file writing. This 
+	    class is a child of the <span class="bold">OutputStream</span> class, and has 
+	    many siblings which handle other types of streams 
+	    (AudioOutputStream, StringBufferOutputStream, PipedOutputStream, etc. 
+	    The <span class="bold">FileInputStream</span> follows this exact same pattern.)
+	</p>
+
+
+	<!--Header-->
+	<p class="singleElement head">
+	    More behavior of Streams / Buffers
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    <span class="bold">Streams</span> and <span class="bold">Buffers</span> play very nicely together, and can
+	    greatly stabilize a program whose <span class="bold">data flow</span> is not instantaneous.
+	    You likely uses streams and buffers daily- when you wait for a 
+	    webpage to load, when you play music on your computer, 
+	    when you load a file from hard drive. 
+	    <br/><span class="tab"></span>
+	    But working with them often adds 
+	    an addition layer of complexity to your project. Remember, 
+	    <span class="bold">asynchronous code</span> finishes at some arbitary time, 
+	    and your code may not be able to determine when it does.
+	</p>
+
+	<!--Header-->
+	<p class="singleElement miniHead">
+	    Blocking
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Reading / writing the buffer occurred so quickly that I couldn't 
+	    detect the wait.  Both our input and output 
+	    were both <span class="bold">locally saved to our HD</span> (no travel latency),
+	    and that data was also <span class="bold">really really tiny</span> (49 bytes). In the 
+	    real world, it's most likely not going to be this smooth.
+	</p>
+
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    This is important to because the <span class="bold">read</span> and <span class="bold">write</span>
+	    methods are both <span class="bold">blocking</span>. A <span class="bold">Blocking</span>
+	    method is one that potentially has some 
+	    execution-stalling operation buried inside, like a 
+	    <span class="bold">while loop</span> or a call to <span class="bold">Thread.sleep</span>. If you call a 
+	    blocking method without <span class="italics">knowing</span> it's 
+	    a blocking method, you can sometimes have
+	    a difficult time figuring out why something 
+	    is unresponsive in your program.
+	</p>
+
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    <span class="bold">Blocking methods should usually be handled in seperate Threads</span>-
+	    Unless you <span class="italics">intend</span> on a hangup in one part of your code
+	    to interfere with the others. 
+
+	</p>
+
+	<!--Header-->
+	<p class="singleElement miniHead">
+	    Buffer Size
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+
+	    The <span class="bold">size</span> of a buffer is how much information it can hold before
+	    it needs to be flushed and refilled- usually 
+	    measured in bytes. In the first example, the buffer size was a ridiculously-small 16 bytes.
+	    There is practically no use for this- the machines you code for have 
+	    the memory to handle a much more practical buffer size.
+	    Don't be shy with memory allocation- but don't be sloppy with it either.
+
+	    <br/><br/>		<span class="tab"></span>
+
+	    When using streams and buffers over a network, you'll probably want to use the biggest 
+	    buffer the connection will allow to minimize the number of packets sent. A common number 
+	    (that I often observe other coders use- don't take my word blindy) is 1024 bytes.
+	    <br/><br/>		<span class="tab"></span>
+
+	    But in general, you'll have a good bit of room for error. Hyper-optimizing buffer sizes
+	    probably will not do much to speed up your program.	
+	</p>
+
+	<!--Header-->
+	<p class="singleElement miniHead">
+	    Infinite Streams
+
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+
+	    As you will see in this post, it's possible for a Stream to read / write for the entirety of a program's
+	    lifecycle, as long as there is something to read to / write from. The [SourceDataLine] the
+	    next step in chain between your code and the audio output hardware, and when it is used
+	    it is constantly accepting / modifying / spitting out data via Streams.
+	</p>
+
+
+	<!--Header-->
+	<p class="singleElement miniHead">
+	    Anyway...
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    These are mostly just the major concepts for <span class="italics">this post</span>. 
+	    It is not an exhaustive list of everything to keep in mind when working
+	    asynchronous code, which can change your program's behavior in subtle ways, and you should be very cognisant of
+	    how your code interacts with it <span class="bold">now</span>, as well as
+	    <span class="bold">in the future</span> when the program's state changes.
+
+	    <br/>
+	    <br/>
+
+	    For a more advanced way to handle asynchronous Java programming
+	    <a href="http://www.baeldung.com/java-future">
+		check out the Future.</a> (As is the name, 
+	    not the description)
+	</p>
+
+	<div class="sep"></div>
+
+	<!--Header-->
+	<p class="singleElement head">
+	    Sin Wave Tone Generator
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    There is a lot to cover for this example and I probably already spent 15 minutes of your time
+	    talking about buffers and streams- so I'm going to try a different approach. For this post I am going describe
+	    the code used from a higher level, so if you're confused about any stuff I say well 
+	    you'll have to figure it out, I don't have a comments section yet.
+	    <br/><span class="tab"></span>
+	    You can scrap the MyBufferedReader class, it is not used anymore. This is what the finished product of today's post
+	    will be. It's a program that can generate the full frequency range of an 88-key piano and play it as a pure
+	    sin wave through your speakers. You control the frequency with a slider.
+	</p>
+
+
+	<div class="iframeContainterDiv">
+	    <iframe 
+		style="text-align:center;"
+		width="500" 
+		height="315" 
+		src="https://www.youtube.com/embed/tLovsfpw8dI" 
+		frameborder="0" allow="autoplay; encrypted-media" 
+		allowfullscreen="true">
+	    </iframe>
+	</div>
+
+
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    There is about 700 lines of code that comprise it, so you might want to download the finished code first.
+	</p>
+
+
+	<a class="singleElement link mouseoverHighlight1" 
+	   href='/downloadFile/SinWaveAudio_ALL'>
+	    <img src="../../images/External/downloadArrow.png">   
+	    <span> Download finished code </span>
+	</a>
+
+	<p class="singleElement para">
+
+	    <br/>
+	    <br/>
+
+	</p>
+
+	<!--Code-->
+	<div id="code3_h" class="codeHead">
+	    <button
+		id="code3_b0"
+		onclick="hideOrShowCode('code3', 'code3_h', 'code3_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		Create <span>ToneGenerator.java</span>
+	    </p>
+	</div>
+	<pre id="code3" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
+import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+public class ToneGenerator {
+
+    // determines how many samples per second will be written to the SourceDataLine.
+    protected final int audioSampleRate = 43200;
+
+    // When true, this program will continuously write to the SourceDataLine 
+    boolean playTone = true;
+    
+    static double currentVolume = 0.8;
+    static double currentFrequency = 347;
+
+    // This is the object that receives audio data and forwards it to the speakers. It has an audio buffer
+    // which is being continuously written to inside the threadTask
+    SourceDataLine sourceDataLine;
+
+    public static void main(String[] args) throws LineUnavailableException {
+
+	new ToneGenerator();
+    }
+
+    ToneGenerator() {
+
+	super();
+
+	setupSinWaveGenerator();
+
+	addShutDownHook();
+    }
+
+    private void setupSinWaveGenerator() {
+
+	Thread thread = new Thread(audioGeneratorThread());
+	thread.start();
+    }
+
+    private void addShutDownHook() {
+
+	Runtime.getRuntime().addShutdownHook(new Thread() {
+
+	    public void run() {
+
+		// Allows the audioGeneratorThread Thread to end when the program closes
+		if (sourceDataLine != null) {
+
+		    sourceDataLine.flush();
+		    System.out.println("line flushed");
+
+		    sourceDataLine.close();
+		    System.out.println("line closed");
+
+		} else {
+
+		    System.out.println("SourceDataLine never initialized, nothing to close / drain");
+		}
+	    }
+	});
+    }
+
+    private Runnable audioGeneratorThread() {
+
+	return () -> {
+
+	    try {
+
+		// how long (in milliseconds) the audio buffer will last before being filled again
+		int lengthOfWaveBufferInMillis = 12;
+
+		// How many individual audio samples will be inside the audio buffer
+		int numberOfSamplesInWaveBuffer = (int) ((lengthOfWaveBufferInMillis * audioSampleRate) / 1000);
+
+		// Create an AudioFormat object, which will tell the sourceDataLine how to interpet the Stream of bytes
+		AudioFormat af = new AudioFormat(audioSampleRate, 16, 1, true, true);
+
+		// Initialize the sourceDataLine and open a data Stream to it.
+		sourceDataLine = AudioSystem.getSourceDataLine(af);
+		sourceDataLine.open(af, numberOfSamplesInWaveBuffer * 2);
+
+		// Reduces the master volume of the program 
+		FloatControl volume = (FloatControl) sourceDataLine.getControl(FloatControl.Type.MASTER_GAIN);
+		volume.setValue(-12.0F);
+
+		System.out.println("begin writing to buffer");
+		sourceDataLine.start();
+
+		// Create the audio buffer
+		byte[] audioDataBuffer = new byte[numberOfSamplesInWaveBuffer];
+
+		while (playTone) {
+
+		    // Generate the new waveform to fill the buffer
+		    audioDataBuffer = createAndPopulateNextAudioDataBuffer(currentFrequency, numberOfSamplesInWaveBuffer);
+
+		    // Stream the contents of the buffer into the sourceDataLine. This method is blocking,
+		    // and will only return when the sourceDataLine's internal buffer has "drained" enough
+		    // to allow another write() command to top it off again.
+		    int count = sourceDataLine.write(audioDataBuffer, 0, audioDataBuffer.length);
+//		    System.out.println(count + " many bytes written");
+
+		}
+
+		sourceDataLine.flush();
+		sourceDataLine.close();
+
+		System.out.println("closing sourceDataLine");
+
+
+	    } catch (LineUnavailableException e) {
+		System.out.println(e);
+	    }
+	};
+    }
+
+public byte[] createAndPopulateNextAudioDataBuffer(double freq, int samples) {
+
+	byte[] audioDataBuffer = new byte[samples];
+
+	double period = audioSampleRate / freq;
+	double angleInRads = 0;
+	double additionalAmpReduction = 0.7;
+
+	for (int loop = 0; loop &lt; audioDataBuffer.length; loop++) {
+
+	    angleInRads = (2.0 * Math.PI * loop / period);
+
+	    audioDataBuffer[loop] = (byte) (currentVolume * (Math.sin(angleInRads) * 127f) * (additionalAmpReduction));
+	}
+
+	return audioDataBuffer;
+    }
+
+}</pre>
+
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+
+	    Like I said, a lot to take it at once. Minimize all the methods in your IDE and just 
+	    observe the objs/vars and method declarations. I have left comments inside the code if you want more detail.
+	</p>
+
+	<div class="singleElement imageContainer bigImage">
+	    <img src="" 
+		 th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic3.png' }"
+		 class="img-fluid lazy"></img>
+	    <p>
+		Giving your variables / objects / methods informative names can help you (and others) 
+		understand how they function.		   
+	    </p>
+	</div>
+
+	<p class="singleElement miniHead">
+
+	    objs / vars
+	</p>
+
+	<p class="singleElement para">
+	    <span class="bold">audioSampleRate</span> determines how many samples 
+	    per second will be written to the <span class="bold">SourceDataLine</span>.
+	    <br/><br/>
+	    <span class="bold">currentFrequency</span> is used by the <span class="bold">createAndPopulateNextAudioDataBuffer</span>
+	    method to generate a sin wave.
+	    <span class="bold">currentVolume</span> controls the amplitude of that wave.
+	    Both variables will be changed with JSliders that we add later.
+	    <br/><br/>
+	    <span class="bold">playTone</span> will always be true until the program 
+	    is ready to exit, at which points the infinite loop
+	    inside the <span class="bold">audioGeneratorThread</span> will end.
+	    <br/><br/>
+	    The <span class="bold">SourceDataLine</span> class is related to the <span class="bold">Clip</span>
+	    from the previous post. In this program, the 
+	    <span class="bold">sourceDataLine</span> instance will be fed a constant stream of bytes inside the infinite loop of the
+	    <span class="bold">audioGeneratorThread</span>.
+
+	</p>
+
+	<p class="singleElement miniHead">
+	    methods
+	</p>
+
+
+
+
+	<p class="singleElement para">
+	    <span class="bold">setupSinWaveGenerator</span> creates a new Thread and starts it. Most of the work done is by the 
+	    <span class="bold">audioGeneratorThread</span> method, which returns a    		
+	    <a href="http://tutorials.jenkov.com/java/lambda-expressions.html"> lambda expression</a> instead of a value.
+	    <br/><br/>
+	    <span class="bold">AddShutdownHook</span> is needed in order to close any and all <span class="bold">Streams</span> before the exit. 
+	    Unclosed resources can cause problems for the Operating System even after the program ends.
+	    <br/><br/>
+	    The <span class="bold">audioGeneratorThread</span> returns a <span class="bold">Runnable</span>, which is an object that can be used as argument when 
+	    spawning a new Thread, like seen in the setupSinWaveGenerator method.
+	</p>
+
+
+
+
+
+	<div class="sep"></div>
+
+	<!--Header-->
+	<p class="singleElement head">
+	    Test Run
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    When the <span class="bold">SourceDataLine</span> recieves data, it will forward it to the speakers. 
+	    This program can sometimes be loud-
+	    dim your speakers before you run it.
+	</p>
+
+	<p class="singleElement miniHead">
+	    <span class="tab"></span>
+	    Why does it sound like crap?
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Because of unevenness between the <span class="bold">frequency</span>
+	    of the sin wave and <span class="bold">how long that wave lives for.</span>
+	    The variables behind this effect are <span class="bold">currentFrequency</span> 
+	    and <span class="bold">audioSampleRate</span>. Look at the action
+	    of the <span class="bold">createAndPopulateNextAudioDataBuffer</span> method-
+	</p>
+
+
+	<!--Code-->
+	<div id="code4_h" class="codeHead">
+	    <button
+		id="code4_b0"
+		onclick="hideOrShowCode('code4', 'code4_h', 'code4_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		from <span>ToneGenerator.java</span>
+	    </p>
+	</div>
+	<pre id="code4" class="singleElement code prettyprint linenums:136" style="padding-left: 0;">
+public byte[] createAndPopulateNextAudioDataBuffer(double freq, int samples) {
+ 
+	byte[] audioDataBuffer = new byte[samples];
+ 
+	double period = audioSampleRate / freq;
+	double angleInRads = 0;
+	double additionalAmpReduction = 0.7;
+ 
+	for (int loop = 0; loop &lt; audioDataBuffer.length; loop++) {
+ 
+	    angleInRads = (2.0 * Math.PI * loop / period);
+ 
+	    audioDataBuffer[loop] = (byte) (currentVolume * (Math.sin(angleInRads) * 127f) * (additionalAmpReduction));
+	}
+ 
+	return audioDataBuffer;
+    }</pre>	    
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+
+	    Each sin wave we generate lasts for 15 milliseconds (specified in 
+	    <span class="bold">audioGeneratorThread's lengthOfWaveBufferInMillis</span>), regardless of that wave's
+	    frequency. And each wave begins at position 0- but there is no guarantee that
+	    it will <span class="italics">end</span> at zero.
+	</p>
+
+	<div class="singleElement imageContainer smallImage">
+	    <img src="" 
+		 th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic4.png' }"
+		 class="img-fluid lazy"></img>
+	</div>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+
+	    When there is a discontinuity between two waves, you hear it as a click or pop.
+	    Since there is a discontinuity every 12 milliseconds, it makes a pretty ugly
+	    tone. 
+	    <br/><span class="tab"></span>
+	    Go back to audioGeneratorThread's <span class="bold">lengthOfWaveBufferInMillis</span> variable and change
+	    it to <span class="bold">200</span>- so that a new sin buffer is generated 5 times a second, and run the 
+	    program again- and run the program. It should sound <span class="italics">better</span>, but still has an
+	    unwanted tk-tk-tk sound.
+	    <br/><span class="tab"></span>
+	    All we need to do to fix this, so that it makes a pleasant tone for any
+	    buffer size or frequency, is to offset where each new sin wave starts.
+	    If the last wave ended at a value of -127, the new wave begins there instead of 0 
+	    (to be more precise- it doesn't begin <span class="italics">exactly</span> there. It begins where the next
+	    sample <span class="italics">would have</span> been.
+	    <br/><span class="tab"></span>
+	    Another variable, <span class="bold">angleOffsetToApply</span> is introduced to fix this. It needs to have
+	    <span class="bold">global</span> scope, not just <span class="bold">method scope</span>,
+	    because it needs to persist until the next call to createAndPopulateNextAudioDataBuffer, so that its
+	    value can be used as the starting offset of the next sin wave.
+	    Add this variable to the ToneGenerator class.
+	</p>
+
+	<!--Code-->
+	<div id="code5_h" class="codeHead">
+	    <button
+		id="code5_b0"
+		onclick="hideOrShowCode('code5', 'code5_h', 'code5_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		Add to <span>ToneGenerator.java</span>
+	    </p>
+	</div>
+	<pre id="code5" class="singleElement code prettyprint linenums:36" style="padding-left: 0;">
+double angleOffsetToApply = 0;
+	</pre>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Next, replace the <span class="bold">createAndPopulateNextAudioDataBuffer</span> method with this
+	</p>
+
+
+
+	<!--Code-->
+	<div id="code6_h" class="codeHead">
+	    <button
+		id="code6_b0"
+		onclick="hideOrShowCode('code6', 'code6_h', 'code6_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		replace inside <span>ToneGenerator.java</span>
+	    </p>
+	</div>
+	<pre id="code6" class="singleElement code prettyprint linenums:138" style="padding-left: 0;">
+private byte[] createAndPopulateNextAudioDataBuffer(double freq, int samples) {
+
+    byte[] audioDataBuffer = new byte[samples];
+
+    double period = 1f / freq;
+    double angleInRads = 0;
+    double additionalAmpReduction = 0.7;
+    double distanceInRadsBetweenSamples = (2.0 * Math.PI) / (audioSampleRate * period);
+
+    for (int loop = 0; loop &lt; audioDataBuffer.length; loop++) {
+
+	angleInRads = (2.0 * Math.PI * loop) / (audioSampleRate * period) + angleOffsetToApply;
+
+	audioDataBuffer[loop] = (byte) (currentVolume * (Math.sin(angleInRads) * 127f) * (additionalAmpReduction));
+    }
+
+    angleOffsetToApply = (angleInRads % (2 * Math.PI)) + distanceInRadsBetweenSamples;
+
+    return audioDataBuffer;
+}
+	</pre>
+
+	<div class="singleElement imageContainer smallImage">
+	    <img src="" 
+		 th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic6.png' }"
+		 class="img-fluid lazy"></img>
+
+	</div>
+
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    This method is kinda heavy into trigonometry, so I can't go over every detail.
+	    The main change here is the <span class="bold">distanceInRadsBetweenSamples</span> value. It is changed during 
+	    every iteration of the for-loop, but only the <span class="italics">last</span> value it has is important.
+	    Notice that after the for-loop ends, <span class="bold">angleOffsetToApply</span> is set using
+	    the last value of <span class="bold">distanceInRadsBetweenSamples</span>.
+	    <br/><span class="tab"></span>
+	    The next time this method is called, <span class="bold">angleOffsetToApply</span> is used to
+	    determine how far from 0, either positive or negative, the new sin wave should 
+	    start at.
+	</p>
+
+	<div class="sep"></div>
+
+	<!--Header-->
+	<p class="singleElement head">
+	    Adding a GUI
+	</p>
+
+	<p class="singleElement miniHead">
+	    ToneGenerator
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+
+	    The code chunks to copy for are going to get pretty big, but there won't be many of them.
+	    The GUI for this program will use JSliders, and JLabels, all contained inside JPanels.
+	    A custom JComponent will be used to allow the frequency tick marks to be dynamically drawn.
+	    <br/><span class="tab"></span>
+	    The <span class="bold">JSlider</span> will
+	    control the <span class="bold">currentFrequency</span> value.
+	    Since a new buffer is created every 12 milliseconds, you can hear the changes virtually instantly.
+	    <br/><span class="tab"></span>
+	    The <span class="bold">JComboBox</span>'s selections will determine the range between the 
+	    highest and lowest tones.
+	    <br/><span class="tab"></span>
+	    <span class="bold">JLabels will display</span>
+	    the values of the <span class="bold">currentFrequency</span> and <span class="bold">currentVolume</span>
+	</p>
+
+	<!--Code-->
+	<div id="code7_h" class="codeHead">
+	    <button
+		id="code7_b0"
+		onclick="hideOrShowCode('code7', 'code7_h', 'code7_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		Replace entirety of <span>ToneGenerator.java</span>
+	    </p>
+	</div>
+	<pre id="code7" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
+import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+public class ToneGenerator extends JFrame implements ActionListener, ChangeListener {
+
+    // determines how many samples per second will be written to the SourceDataLine.
+    protected final int audioSampleRate = 43200;
+
+    // When true, this program will continuously write to the SourceDataLine 
+    boolean playTone = true;
+
+    static double currentVolume = 0.8;
+    static double currentFrequency = 347;
+
+    // These values are determined by the selection of the JComboBoxes
+    static String lowestTone = "C3";
+    static String highestTone = "C5";
+
+    //This variable is used to allow each NEW wave buffer to start where the PREVIOUS buffer left off (Prevents pops and clicks in the audio)
+    double angleOffsetToApply = 0;
+
+    // The maximum value for both JSliders. 
+    // The frequency slider should be more sensitive to change than the volume slider.
+    int freqSliderRange = 512;
+    int volumeSliderRange = 100;
+
+    // This is the object that receives audio data and forwards it to the speakers. It has an audio buffer
+    // which is being continuously written to inside the threadTask
+    SourceDataLine sourceDataLine;
+
+    // Allows the user to choose the highest and lowest possible tones
+    JLabel label_highestTone = new JLabel("Highest Tone");
+    JLabel label_lowestTone = new JLabel("Lowest Tone");
+    JComboBox comboBox_highestTone = new JComboBox();
+    JComboBox comboBox_lowestTone = new JComboBox();
+
+    // Allows the user to change the frequency played and Volume
+    JLabel label_currentFrequency;
+    JSlider slider_currentFrequency;
+    JLabel label_currentVolume;
+    JSlider slider_currentVolume;
+
+    // Displays the frequency range and currentFrequency
+    ToneDisplay toneDisplay = new ToneDisplay();
+
+    //========================================================================
+    // First methods executed on startup, placed in call order
+    //========================================================================
+    
+    public static void main(String[] args) throws LineUnavailableException {
+
+	new ToneGenerator();
+    }
+
+    public ToneGenerator() {
+
+	super();
+
+	intitializeValues();
+
+	setupGUI();
+
+	setupSinWaveGenerator();
+
+	addShutDownHook();
+    }
+
+    private void intitializeValues() {
+
+	currentFrequency = getFrequencyOfTone(lowestTone);
+	currentVolume = 0.25;
+
+	for (String toneName : ToneBean.toneMap.keySet()) {
+
+	    comboBox_highestTone.addItem(toneName);
+	    comboBox_lowestTone.addItem(toneName);
+	}
+    }
+
+    private void setupGUI() {
+
+	// Setup the JFrame
+	setVisible(true);
+	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+	// Create a top-level JPanel to add all other components to
+	JPanel masterPanel = new JPanel();
+	BoxLayout masterLayout = new BoxLayout(masterPanel, BoxLayout.X_AXIS);
+	masterPanel.setLayout(masterLayout);
+	masterPanel.setBackground(Color.decode("#CADBC0"));
+	this.add(masterPanel);
+
+	// The JPanel that all control elements (Buttons, sliders, combo boxes) will be inside
+	JPanel controlPanel = new JPanel();
+	controlPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+	BoxLayout controlPanelLayout = new BoxLayout(controlPanel, BoxLayout.Y_AXIS);
+	controlPanel.setLayout(controlPanelLayout);
+	masterPanel.add(controlPanel);
+
+	// Create the combo boxes used to select the tone range
+	JPanel toneRangePanel = new JPanel();
+	GridLayout tonePanelLayout = new GridLayout(2, 2, 10, 10);
+	toneRangePanel.setLayout(tonePanelLayout);
+
+	int indexOfHighestTone = getIndexOfTone(highestTone);
+	int indexOfLowestTone = getIndexOfTone(lowestTone);
+
+	comboBox_highestTone.setSelectedIndex(indexOfHighestTone);
+	comboBox_lowestTone.setSelectedIndex(indexOfLowestTone);
+	comboBox_highestTone.addActionListener(this);
+	comboBox_lowestTone.addActionListener(this);
+
+	toneRangePanel.add(label_lowestTone);
+	toneRangePanel.add(label_highestTone);
+	toneRangePanel.add(comboBox_lowestTone);
+	toneRangePanel.add(comboBox_highestTone);
+
+	controlPanel.add(toneRangePanel);
+
+	// The Panel that hold the sliders for volume and frequency
+	JPanel freqAndVolumePanel = new JPanel();
+	BoxLayout toneBoxLayout = new BoxLayout(freqAndVolumePanel, BoxLayout.X_AXIS);
+	freqAndVolumePanel.setLayout(toneBoxLayout);
+
+	// Add the Panel, Slider, and Label for the frequency
+	JPanel freqSelectionPanel = new JPanel();
+	BoxLayout freqBoxLayout = new BoxLayout(freqSelectionPanel, BoxLayout.Y_AXIS);
+	freqSelectionPanel.setLayout(freqBoxLayout);
+
+	slider_currentFrequency = new JSlider(JSlider.VERTICAL, 0, freqSliderRange, 0);
+	slider_currentFrequency.setAlignmentX(SwingConstants.CENTER);
+	slider_currentFrequency.addChangeListener(this);
+	freqSelectionPanel.add(slider_currentFrequency);
+
+	label_currentFrequency = new JLabel();
+	label_currentFrequency.setAlignmentX(SwingConstants.CENTER);
+	freqSelectionPanel.add(label_currentFrequency);
+
+	freqAndVolumePanel.add(freqSelectionPanel);
+
+	// Add the Panel, Slider, and Label for the frequency
+	JPanel volumeSelectionPanel = new JPanel();
+	BoxLayout volumeBoxLayout = new BoxLayout(volumeSelectionPanel, BoxLayout.Y_AXIS);
+	volumeSelectionPanel.setLayout(volumeBoxLayout);
+
+	slider_currentVolume = new JSlider(JSlider.VERTICAL, 0, volumeSliderRange, (int) (currentVolume * 100f));
+	slider_currentVolume.setAlignmentX(SwingConstants.CENTER);
+	slider_currentVolume.addChangeListener(this);
+	volumeSelectionPanel.add(slider_currentVolume);
+
+	label_currentVolume = new JLabel();
+	label_currentVolume.setAlignmentX(SwingConstants.CENTER);
+	volumeSelectionPanel.add(label_currentVolume);
+
+	freqAndVolumePanel.add(volumeSelectionPanel);
+
+	controlPanel.add(freqAndVolumePanel);
+
+	// Add the component that draws the tones to screen.
+	toneDisplay.addComponentListener(new ComponentAdapter() {
+	    @Override
+	    public void componentResized(ComponentEvent e) {
+		toneDisplay.repaint();
+	    }
+	});
+	toneDisplay.setPreferredSize(new Dimension(300, 600));
+	masterPanel.add(toneDisplay);
+
+	updateVisuals();
+
+	// Fit everything nicely inside the JFrame
+	pack();
+    }
+
+    private void setupSinWaveGenerator() {
+
+	Thread thread = new Thread(audioGeneratorThread());
+	thread.start();
+    }
+
+    private void addShutDownHook() {
+
+	Runtime.getRuntime().addShutdownHook(new Thread() {
+
+	    public void run() {
+
+		// Allows the audioGeneratorThread Thread to end when the program closes
+		playTone = false;
+
+		if (sourceDataLine != null) {
+
+		    System.out.println("start drain");
+		    sourceDataLine.drain();
+		    System.out.println("end drain");
+
+		    sourceDataLine.close();
+		    System.out.println("line closed");
+
+		} else {
+
+		    System.out.println("SourceDataLine never initialized, nothing to close / drain");
+		}
+	    }
+	});
+    }
+
+    //========================================================================
+    // Main helper methods
+    //========================================================================
+
+    public static double getFrequencyOfTone(String toneName) {
+
+	return ToneBean.toneMap.get(toneName);
+    }
+
+    public int getDistanceBetweenHighestAndLowestTones() {
+
+	int numberOfPlayableTones = 0;
+	int indexA = 0;
+	int indexB = 0;
+	for (String toneName : ToneBean.toneMap.keySet()) {
+
+	    if (toneName.equals(lowestTone)) {
+		break;
+	    }
+	    indexA++;
+	}
+	for (String toneName : ToneBean.toneMap.keySet()) {
+
+	    if (toneName.equals(highestTone)) {
+		break;
+	    }
+	    indexB++;
+	}
+	int numberOfTones = indexB - indexA;
+	return numberOfTones;
+    }
+
+    double getFrequencyFromSliderValue(double sliderValue) {
+
+	// This method takes advantage of the fact that each note's frequency 
+	// is (2^(1/12)) times, (or about 1.059) higher than the previous note.
+
+	double lowestFreq = getFrequencyOfTone(lowestTone);
+	double numberOfTonesPerMeasure = 12;
+	double numberOfPlayableTones = (double) getDistanceBetweenHighestAndLowestTones();
+
+	// These variable changes LINEARLY as the slider moves.
+	double numberOfPlayableMeasures = (numberOfPlayableTones) / numberOfTonesPerMeasure;
+	double normalizedSliderValue = sliderValue / freqSliderRange;
+	double power = numberOfPlayableMeasures * normalizedSliderValue;
+
+	// This variables changes NONLINEARLY as the slider moves.	
+	double freq = lowestFreq * Math.pow(2, power);
+
+	return freq;
+    }
+
+    int getIndexOfTone(String inputToneName) {
+
+	int index = 0;
+	for (String toneName : ToneBean.toneMap.keySet()) {
+
+	    if (toneName.equals(inputToneName)) {
+
+		return index;
+	    }
+	    index++;
+	}
+
+	return -1;
+    }
+
+    void updateVisuals() {
+
+	// Get the slider value in String form and truncate it if it's too long
+	String StringValue = Double.toString(currentFrequency);
+	if (StringValue.length() > 5) {
+	    String truncatedValue = StringValue.substring(0, 5);
+	    StringValue = truncatedValue;
+	}
+
+	// By using HTML tags inside the Button's label, you can show multiple lines of text.
+	String textValue = "&lt;html>Freq&lt;br>" + StringValue + "&lt;/html>";
+	label_currentFrequency.setText(textValue);
+
+	textValue = "&lt;html>Vol&lt;br>" + Integer.toString((int) ((currentVolume) * 100f)) + "&lt;/html>";
+	label_currentVolume.setText(textValue);
+
+	toneDisplay.repaint();
+    }
+
+    //========================================================================
+    // The Thread that generates audio data, and its helper method
+    //========================================================================
+   
+    private Runnable audioGeneratorThread() {
+
+	return () -&gt; {
+
+	    try {
+
+		// how long (in milliseconds) the audio buffer will last before being filled again
+		int lengthOfWaveBufferInMillis = 15;
+
+		// How many individual audio samples will be inside the audio buffer
+		int numberOfSamplesInWaveBuffer = (int) ((lengthOfWaveBufferInMillis * audioSampleRate) / 1000);
+
+		// Create an AudioFormat object, which will tell the sourceDataLine how to interpet the Stream of bytes
+		AudioFormat af = new AudioFormat(audioSampleRate, 16, 1, true, true);
+
+		// Initialize the sourceDataLine and open a data Stream to it.
+		sourceDataLine = AudioSystem.getSourceDataLine(af);
+		sourceDataLine.open(af, numberOfSamplesInWaveBuffer * 2);
+
+		// Reduces the master volume of the program 
+		FloatControl volume = (FloatControl) sourceDataLine.getControl(FloatControl.Type.MASTER_GAIN);
+		volume.setValue(-12.0F);
+
+		System.out.println("begin writing to buffer");
+		sourceDataLine.start();
+
+		// Create the audio buffer
+		byte[] audioDataBuffer = new byte[numberOfSamplesInWaveBuffer];
+
+		while (playTone) {
+
+		    // Generate the new waveform to fill the buffer
+		    audioDataBuffer = createAndPopulateNextAudioDataBuffer(currentFrequency, numberOfSamplesInWaveBuffer);
+
+		    // Stream the contents of the buffer into the sourceDataLine. This method is blocking,
+		    // and will only return when the sourceDataLine's internal buffer has "drained" enough
+		    // to allow another write() command to top it off again.
+		    int count = sourceDataLine.write(audioDataBuffer, 0, audioDataBuffer.length);
+//		    System.out.println(count + " many bytes written");
+
+		}
+
+		sourceDataLine.flush();
+		sourceDataLine.close();
+
+		System.out.println("closing sourceDataLine");
+
+
+	    } catch (LineUnavailableException e) {
+		System.out.println(e);
+	    }
+	};
+    }
+
+    public byte[] createAndPopulateNextAudioDataBuffer(double freq, int samples) {
+
+	byte[] audioDataBuffer = new byte[samples];
+
+	double period = 1f / freq;
+	double angleInRads = 0;
+	double additionalAmpReduction = 0.7;
+	double distanceInRadsBetweenSamples = 0;
+
+	for (int loop = 0; loop &lt; audioDataBuffer.length; loop++) {
+
+	    angleInRads = (2.0 * Math.PI * loop) / (audioSampleRate * period) + angleOffsetToApply;
+
+	    audioDataBuffer[loop] = (byte) (currentVolume * (Math.sin(angleInRads) * 127f) * (additionalAmpReduction));
+
+	    distanceInRadsBetweenSamples = (2.0 * Math.PI) / (audioSampleRate * period);
+	}
+
+	angleOffsetToApply = (angleInRads % (2 * Math.PI)) + distanceInRadsBetweenSamples;
+
+	return audioDataBuffer;
+    }
+
+    //========================================================================
+    // Triggered by Listener events
+    //========================================================================
+
+    // This is triggered by selecting a new JComboBox element
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+	JComboBox comboBox = (JComboBox) e.getSource();
+	String selection = (String) comboBox.getSelectedItem();
+
+	if (comboBox == comboBox_lowestTone) {
+
+	    int indexOfSelection = getIndexOfTone(selection);
+	    int indexOfHighestTone = getIndexOfTone(highestTone);
+
+	    if (indexOfSelection &lt; indexOfHighestTone) {
+
+		lowestTone = selection;
+
+	    } else {
+
+		int indexOfLowestTone = getIndexOfTone(lowestTone);
+		comboBox.setSelectedIndex(indexOfLowestTone);
+	    }
+
+	} else if (comboBox == comboBox_highestTone) {
+
+	    int indexOfSelection = getIndexOfTone(selection);
+	    int indexOfLowestTone = getIndexOfTone(lowestTone);
+
+	    if (indexOfSelection > indexOfLowestTone) {
+
+		highestTone = selection;
+
+	    } else {
+
+		int indexOfHighestTone = getIndexOfTone(highestTone);
+		comboBox.setSelectedIndex(indexOfHighestTone);
+	    }
+
+	}
+	toneDisplay.repaint();
+    }
+
+    // This is triggered by moving a new JSlider
+    @Override
+    public void stateChanged(ChangeEvent e) {
+
+	JSlider eventSource = (JSlider) e.getSource();
+
+	if (eventSource == slider_currentFrequency) {
+
+	    double sliderValue = slider_currentFrequency.getValue();
+	    currentFrequency = getFrequencyFromSliderValue(sliderValue);
+	    updateVisuals();
+	}
+	if (eventSource == slider_currentVolume) {
+
+	    double sliderValue = slider_currentVolume.getValue() / 100f;
+	    currentVolume = sliderValue;
+	    updateVisuals();
+	}
+    }
+}
+	</pre>
+
+	<p class="singleElement para">
+	    <br/><br/><br/><br/>
+	</p>
+
+	<p class="singleElement miniHead">
+	    ToneBean
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+
+	    <span class="bold">ToneBean</span> has one main responsibility- to hold associations
+	    between all 88 <span class="bold">tone names</span> and <span class="bold">frequencies</span>. The object that accomplished this is a
+	    <span class="bold">LinkedHashMap</span>. 
+	    <br/><span class="tab"></span>
+	    <span class="bold">LinkedHashMaps</span> are simply Maps (like an array, but whose elements are
+	    referenced by a <span class="italics">value</span> or <span class="italics">object</span> instead of just an index).
+	    They have the advantage of remembering <span class="bold">add-order</span>, and when you enumerate
+	    through them they are always selected <span class="italics">in the order in which they were added</span>.
+	    This is useful for the program's GUI, when the user must choose a tone from a pull-down
+	    list of 87 others.
+	</p>
+
+
+	<!--Code-->
+	<div id="code9_h" class="codeHead">
+	    <button
+		id="code9_b0"
+		onclick="hideOrShowCode('code9', 'code9_h', 'code9_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		create <span>ToneBean.java</span>
+
+	    </p>
+	</div>
+	<pre id="code9" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+import java.util.LinkedHashMap;
+
+public class ToneBean {
+
+    public static String getClosestTone(double sliderFreq) {
+
+	// Arbitrarily set to 100. It will change when the loop starts
+	double shortestDistance = 100;
+	String closestTone = "";
+
+	// Loop through all notes in order, from A0 to C8 on the keyboard
+	for (String toneName : toneMap.keySet()) {
+
+	    // Find the tone who's frequency is closest to this method's argument (sliderFreq)
+	    double freqForTone = toneMap.get(toneName);
+	    if (shortestDistance > Math.abs(freqForTone - sliderFreq)) {
+
+		shortestDistance = Math.abs(freqForTone - sliderFreq);
+		closestTone = toneName;
+	    }
+	}
+
+	return closestTone;
+    }
+
+    public static LinkedHashMap&lt;String, Double> toneMap = new LinkedHashMap&lt;String, Double>() {
+
+	{
+	    put("A0", 27.5000);
+	    put("A#0/Bb0", 29.1353);
+	    put("B0", 30.8677);
+	    put("C1", 32.7032);
+	    put("C#1/Db1", 34.6479);
+	    put("D1", 36.7081);
+	    put("D#1/Eb1", 38.8909);
+	    put("E1", 41.2035);
+	    put("F1", 43.6536);
+	    put("F#1/Gb1", 46.2493);
+	    put("G1", 48.9995);
+	    put("G#1/Ab1", 51.9130);
+	    put("A1", 55.0000);
+	    put("A#1/Bb1", 58.2705);
+	    put("B1", 61.7354);
+	    put("C2", 65.4064);
+	    put("C#2/Db2", 69.2957);
+	    put("D2", 73.4162);
+	    put("D#2/Eb2", 77.7817);
+	    put("E2", 82.4069);
+	    put("F2", 87.3071);
+	    put("F#2/Gb2", 92.4986);
+	    put("G2", 97.9989);
+	    put("G#2/Ab2", 103.826);
+	    put("A2", 110.000);
+	    put("A#2/Bb2", 116.541);
+	    put("B2", 123.471);
+	    put("C3", 130.813);
+	    put("C#3/Db3", 138.591);
+	    put("D3", 146.832);
+	    put("D#3/Eb3", 155.563);
+	    put("E3", 164.814);
+	    put("F3", 174.614);
+	    put("F#3/Gb3", 184.997);
+	    put("G3", 195.998);
+	    put("G#3/Ab3", 207.652);
+	    put("A3", 220.000);
+	    put("A#3/Bb3", 233.082);
+	    put("B3", 246.942);
+	    put("C4", 261.626);
+	    put("C#4/Db4", 277.183);
+	    put("D4", 293.665);
+	    put("D#4/Eb4", 311.127);
+	    put("E4", 329.628);
+	    put("F4", 349.228);
+	    put("F#4/Gb4", 369.994);
+	    put("G4", 391.995);
+	    put("G#4/Ab4", 415.305);
+	    put("A4", 440.000);
+	    put("A#4/Bb4", 466.164);
+	    put("B4", 493.883);
+	    put("C5", 523.251);
+	    put("C#5/Db5", 554.365);
+	    put("D5", 587.330);
+	    put("D#5/Eb5", 622.254);
+	    put("E5", 659.255);
+	    put("F5", 698.456);
+	    put("F#5/Gb5", 739.989);
+	    put("G5", 783.991);
+	    put("G#5/Ab5", 830.609);
+	    put("A5", 880.000);
+	    put("A#5/Bb5", 932.328);
+	    put("B5", 987.767);
+	    put("C6", 1046.50);
+	    put("C#6/Db6", 1108.73);
+	    put("D6", 1174.66);
+	    put("D#6/Eb6", 1244.51);
+	    put("E6", 1318.51);
+	    put("F6", 1396.91);
+	    put("F#6/Gb6", 1479.98);
+	    put("G6", 1567.98);
+	    put("G#6/Ab6", 1661.22);
+	    put("A6", 1760.00);
+	    put("A#6/Bb6", 1864.66);
+	    put("B6", 1975.53);
+	    put("C7", 2093.00);
+	    put("C#7/Db7", 2217.46);
+	    put("D7", 2349.32);
+	    put("D#7/Eb7", 2489.02);
+	    put("E7", 2637.02);
+	    put("F7", 2793.83);
+	    put("F#7/Gb7", 2959.96);
+	    put("G7", 3135.96);
+	    put("G#7/Ab7", 3322.44);
+	    put("A7", 3520.00);
+	    put("A#7/Bb7", 3729.31);
+	    put("B7", 3951.07);
+	    put("C8", 4186.01);
+	}
+    ;
+
+};
+
+}
+	</pre>
+
+	<p class="singleElement para">
+	    <br/><br/><br/><br/>
+	</p>
+
+	<p class="singleElement miniHead">
+	    ToneDisplay
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+
+	    <span class="bold">ToneDisplay</span> is the last class needed. It behaves in same way as the displayer classes from
+	    BeatBuilder and PhysSim1. It also adds <span class="bold">AntiAliasing</span> to the render, which smoothes out the
+	    drawn shapes to remove the pixel stair-step effect.
+
+	    On lines 48-65, you can see how it cycles through <span class="bold">ToneBean.toneMap</span>, drawing 
+	    all tones between lowestFreq and highestFreq.
+	</p>
+
+
+	<!--Code-->
+	<div id="code8_h" class="codeHead">
+	    <button
+		id="code8_b0"
+		onclick="hideOrShowCode('code8', 'code8_h', 'code8_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		create <span>ToneDisplay.java</span>
+	    </p>
+	</div>
+	<pre id="code8" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
+import java.awt.image.BufferedImage;
+import java.net.URL;
+import javax.imageio.ImageIO;
+import javax.swing.JComponent;
+
+public class ToneDisplay extends JComponent {
+
+    BufferedImage clefImage;
+
+    @Override
+    public void paintComponent(Graphics g) {
+
+	// Cast Graphics2D object from method argument
+	Graphics2D g2 = (Graphics2D) g;
+	
+	// Allow G2 to render with AntiAliasing (makes things smoother)
+	RenderingHints rh = new RenderingHints(
+             RenderingHints.KEY_TEXT_ANTIALIASING,
+             RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+	g2.setRenderingHints(rh);
+	
+	// get the needed information from ToneGenerator
+	double lowestFreq = ToneGenerator.getFrequencyOfTone(ToneGenerator.lowestTone);
+	double highestFreq = ToneGenerator.getFrequencyOfTone(ToneGenerator.highestTone);
+	double frequency = ToneGenerator.currentFrequency;
+	double volume = ToneGenerator.currentVolume;
+
+	int heightOfDrawArea = this.getHeight() - 50;
+
+	// Paint  background
+	GradientPaint blackToGray = new GradientPaint(0, 0, Color.WHITE, 0, 500, Color.LIGHT_GRAY);
+	g2.setPaint(blackToGray);
+	g2.fillRect(0, 0, this.getWidth(), this.getHeight());
+
+	// Paint the Tone lines
+	int lineWidth = this.getWidth() - 60;
+	Stroke stroke = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL);
+	g2.setStroke(stroke);
+	g2.setColor(Color.DARK_GRAY);
+
+	// Get all 88 freqs...
+	for (String note : ToneBean.toneMap.keySet()) {
+
+	    double freqForNote = ToneBean.toneMap.get(note);
+
+	    // ...But only draw the freqs that are between the highest / lowest tones
+	    if (freqForNote + 1 > lowestFreq &amp;&amp; freqForNote - 1 &lt; highestFreq) {
+
+		// Determine the correct Y position to draw each line
+		double percentageOfTotalHeight = ((freqForNote - lowestFreq) / (highestFreq - lowestFreq));
+		double yOffset = (1 - percentageOfTotalHeight);
+		double yPos = yOffset * heightOfDrawArea + 30;
+
+		g2.drawString(Double.toString(freqForNote), 10, (int) yPos - 8);
+		g2.drawLine(70, (int) yPos - 8, lineWidth, (int) yPos - 8);
+		g2.drawString(note, lineWidth, (int) yPos - 8);
+	    }
+	}
+
+	// Draw slider frequency. Line thickness is determines by volume
+
+	g2.setColor(Color.decode("#2FB576"));
+
+	double thickness = 2 + volume * 10;
+	stroke = new BasicStroke((float) thickness, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL);
+	g2.setStroke(stroke);
+
+	int locationOfBaseNote = heightOfDrawArea + 23;
+	double offsetMultiplier = ((frequency - lowestFreq) / (highestFreq - lowestFreq));
+
+	int yPos = locationOfBaseNote - (int) (offsetMultiplier * heightOfDrawArea);
+
+	g2.drawLine(60, yPos, lineWidth, yPos);
+
+    }
+
+}</pre>
+
+	<div class="sep"></div>
+
+	<!--Header-->
+	<p class="singleElement head">
+	    Final run
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+
+	    Once you have copied over all the code, the program should run successfully. Can you think of any ways that it could be modified?
+	    What if you had multiple tones playing at once, adding their byte buffers together to make a new tone. Or maybe you could perform
+	    some operation on the sin wave itself, changing its shape (and by consequence, its sound).
+	    <br/><span class="tab"></span>
+	    In later posts, I will continue to play with audio inside Java. Stay tuned!
+	</p>
+
+	<div class="signature">
+	    by Davis Burnside
+	    <br/>
+	    Posted Feb 7 2018
+	</div>
+
+
+    </div>
+</div>

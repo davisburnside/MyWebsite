@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+        <!--<link href="http://sdks.shopifycdn.com/buy-button/latest/buybutton.css" rel="stylesheet" type="text/css" />-->
+
+	<!--JQuery and Velocity must be loaded first to allow header to slide down as soon as possible-->
+	<script src="../../webjars/jquery/3.2.1/jquery.min.js"></script>
+	<script src="../../js/thirdParty/velocity.min.js"></script>
+	<script src="../../js/thirdParty/velocity.ui.min.js"></script>
+
+	<link rel="stylesheet" href="../../webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>       
+	<link rel="stylesheet" href="../../css/main.css"/>
+	<link rel="stylesheet" href="../../css/hamburgerMenu.css"/>
+	<link rel="stylesheet" href="../../css/tutorialPage.css"/>
+        <link rel="stylesheet" href="../../css/shopify.css"/>
+	<link rel="stylesheet" href="../../css/thirdParty/prettyCode_dark.css" id="codeStyle_light"/>
+	<link rel="stylesheet" href="../../css/thirdParty/prettyCode_light.css" id="codeStyle_dark"/>
+
+	<link href="https://fonts.googleapis.com/css?family=Wire+One" rel="stylesheet">
+
+	<title>Davis Burnside</title>
+    </head>
+    <body>
+	<div id="currentPage" style="display:none" th:text="${currentPage}"></div>         
+
+	<div id="mainHeader" class="mainHeaderHidden mainHeaderNotHovering" style="top:-100px;">
+	    <span id="mainHeaderText" class="pointerCursor " onclick="javascript:loadArtContainer(true)"> Davis Burnside </span>
+	    <div id="headerBarButtonContainer" class="row">	 	    
+
+		<div class="expandedMenuButton col-xs-3 pointerCursor mouseoverHighlight1" onclick="javascript:loadArtContainer(true)">
+		    <p> Home </p>		
+		</div>
+		<div class="expandedMenuButton col-xs-3 pointerCursor mouseoverHighlight1" onclick="javascript:loadTutorialsContainer(true)">
+		    <p> Tutorials </p>		
+		</div>
+		<div class="expandedMenuButton col-xs-3 pointerCursor mouseoverHighlight1" onclick="javascript:loadContactContainer(true)">
+		    <p> Bio / <br/> Contact </p>		
+		</div>
+		<div class="expandedMenuButton col-xs-3 pointerCursor mouseoverHighlight1" onclick="javascript:loadShoutoutsContainer(true)">
+		    <p> Shoutouts </p>		
+		</div>	    
+	    </div>
+	    <button class="hamburger">&#9776;</button>
+	    <button class="cross">&#735;</button>	
+	</div>
+	<img id="cornerTriangle" class="noDrag" src="../../images/cornerTriangle2.png"></span>
+
+
+    <!--Dropdown for small screens-->
+    <div class="menu">
+	<ul>
+
+	    <li class="collapsedMenuButton pointerCursor" onclick="javascript:loadArtContainer(true)">
+		<span>Home</span></li>
+	    <li class="collapsedMenuButton pointerCursor" onclick="javascript:loadTutorialsContainer(true)">
+		<span>Tutorials</span></li>
+	    <li class="collapsedMenuButton pointerCursor" onclick="javascript:loadContactContainer(true)">
+		<span>Bio / Contact</span></li>
+	    <li class="collapsedMenuButton pointerCursor" onclick="javascript:loadShoutoutsContainer(true)">
+		<span>Shoutouts</span></li>
+	</ul>
+
+    </div> 
+
+    <!--    <div id="test11"></div>
+	  
+	<div id="lineLeft" class="line" style="transform-origin: 0 0%;"></div>-->
+    <!--<div id="lineRight" style="transform-origin: 100% 0%; float:right" class="line"></div>-->
+    <!--<div id="borderStretch"></div>-->
+    <!--This keeps the mainContainer in the right location-->
+    <!--<div id="placeholder" style="width:100%; height:1px; margin-top: 80px;"></div>-->
+    <!--This div is where most AJAX-loaded content will go-->
+    <!--On the Home page, it is populated with the ArtContainer-->
+    <div id="mainContainer"> </div>
+
+
+
+    <script src="../../webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="../../js/thirdParty/jquery.lazy.js"></script>
+    <script src="../../js/main.js"></script>
+    <script src="../../js/DivLoaderFunctions.js"></script>
+    <script src="../../js/thirdParty/prettify.js"></script>
+    <script src="../../js/CodeViewingFunctions.js"></script>
+    <script src="../../js/shopifyScripts.js"></script>
+
+</body>
+</html>

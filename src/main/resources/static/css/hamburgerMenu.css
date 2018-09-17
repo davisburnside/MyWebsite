@@ -1,0 +1,73 @@
+.hamburger{
+    margin: 10px 10px 0 0;
+    background:none;
+    position:absolute;
+    top:0;
+    right:0;
+    line-height:45px;
+    padding:5px 15px 0px 15px;
+    color: white;
+    border:0;
+    font-size:30px;
+    font-weight:bold;
+    cursor:pointer;
+    outline:none;
+    z-index:10000000000000;
+}
+.hamburger:hover{
+    color:#2FB576;
+}
+.cross{
+    margin: 13px 10px 0 0;
+    background:none;
+    position:absolute;
+    top:0px;
+    right:0;
+    padding:7px 15px 0px 15px;
+    color: white;
+    border:0;
+    font-size:100px;
+    line-height:65px;
+    font-weight:bold;
+    cursor:pointer;
+    outline:none;
+    z-index:10000000000000;
+}
+.cross:hover{
+    color:#2FB576;
+}
+.menu{
+    display: none;
+    z-index:1000000; 
+    font-weight:bold; 
+    font-size:30px;
+    background: linear-gradient(90deg, #B9BFBB, #CFD2D3);
+    /*background:#EEEEEE;*/ 
+    position:relative; 
+    left:80px;
+    top:80px;
+    text-align:center; 
+    font-size:12px;
+}
+.menu ul {
+    margin: 0; 
+    padding: 0; 
+    list-style-type: none; 
+    list-style-image: none;
+}
+.menu li {
+/*    color:#777777;*/
+    display: block;   
+    padding:8px 0 8px 0;
+}
+.menu li:hover{ 
+    color: white;
+    background:#2FB576;
+}
+
+.glyphicon-home{
+  color:white; 
+  font-size:1.5em; 
+  margin-top:5px; 
+  margin:0 auto;
+}

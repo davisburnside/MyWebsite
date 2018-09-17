@@ -1,0 +1,863 @@
+<div th:id="${tutorialId}" class="contentContainer stripedBorder">
+    
+	<div id="articleContent">
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		Physics-based 2D game in Java, Pt 2
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		This post will demonstrate how the PhysicsSim game from part 1 can be 
+		rebuilt with a different <span class="bold">structure</span>. As I 
+		mentioned before, the structure of a program is a key 
+		factor in whether that program can be easily modified, understood, 
+		and reused for other projects. 
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		If you are following along with a blank Project, download the image files and place them
+		in the same folder where your code will go.
+	    </p>
+
+	    <a class="singleElement link mouseoverHighlight1" 
+	       href='/downloadFile/physSimPt2Images'>
+		<img src="../../images/External/downloadArrow.png">   
+		<span> Download images only </span>
+	    </a>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		If you don't want to follow along, you can get final finished code as well.
+	    </p>
+
+	    <a class="singleElement link mouseoverHighlight1" 
+	       href='/downloadFile/physSimPt2All'>
+		<img src="../../images/External/downloadArrow.png">   
+		<span> Download finished code and images </span>
+	    </a>
+
+	    <!--Seperator-->
+	    <div class="singleElement sep"></div>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Any program can be thought of as a system of mini-programs; chunks 
+		of code that act as little cogs to make the whole machine turn. 
+		Let's look at the web of interaction between the 4 classes 
+		that comprised the PhysicsSim V1...    
+	    </p>
+
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span><span class="bold">GameController:</span><br/>
+		<span class="doubleTab"></span>Displayed program window (inherits from JFrame)<br/>
+		<span class="doubleTab"></span>Accepted Mouse interaction (implements MouseListener)<br/>
+		<span class="doubleTab"></span>Processed Mouse interaction (modifies velocity of Ball)<br/>
+		<span class="doubleTab"></span>Ran Game timer<br/>
+		<span class="doubleTab"></span>Computed game physics <br/>
+		<span class="doubleTab"></span>Owned / Displayed GameCanvas instance on-screen<br/>
+		<span class="doubleTab"></span>Owned Ball / Target Instance <br/>
+		<span class="doubleTab"></span>Determines game state (Playing / Game over) <br/><br/>
+		<span class="tab"></span><span class="bold">GameCanvas:</span><br/>
+		<span class="doubleTab"></span>Held static reference to GameController's Ball / Target<br/>
+		<span class="doubleTab"></span>painted Ball and Target to screen<br/><br/>
+		<span class="tab"></span><span class="bold">Ball / Target:</span><br/>
+		<span class="doubleTab"></span>Held information about their own state (location, size, etc)<br/>
+	    </p>
+
+
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Let’s imagine now a slightly different structure. We’ll start by rethinking 
+		how the <span class="bold">Ball</span> and <span class="bold">Target</span> should relate to each other. 
+		In part 1, one was the <span class="bold">child</span> of the other. Since they both have virtually the same 
+		functionality, (having measures of velocity, size, and position that is used by
+		the physicsCalculations method), it’s more logical
+		to make them <span class="bold">siblings</span> (inheriting from a common parent).
+	    </p>
+
+	    <div class="singleElement imageContainer medImage">
+		<img src="" 
+		     th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic1.png' }"
+		     class="img-fluid lazy"></img>
+		<p> A new class, <span class="bold">Entity</span>, can be that common parent.</p>
+	    </div>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Add 3 new classes to your project, <span class="bold">Entity</span>,
+		<span class="bold">Ball</span>, and
+		<span class="bold">Target</span>,
+	    </p>
+
+	    <!--Code-->
+	    <div id="code0_h" class="codeHead">
+		<button
+		    id="code0_b0"
+		    onclick="hideOrShowCode('code0', 'code0_h', 'code0_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    create <span>Entity.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code0" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+
+public class Entity {
+    
+    double xPos = 0;
+    double yPos = 0;
+
+    double xVelocity = 0;
+    double yVelocity = 0;
+
+    int size;
+}
+	    </pre>
+
+	    <!--Code-->
+	    <div id="code1_h" class="codeHead">
+		<button
+		    id="code1_b0"
+		    onclick="hideOrShowCode('code1', 'code1_h', 'code1_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    create <span>Ball.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code1" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+
+public class Ball extends Entity{
+
+    double bounciness= 0.95;
+    double friction = 0;
+}
+	    </pre>
+
+	    <!--Code-->
+	    <div id="code2_h" class="codeHead">
+		<button
+		    id="code2_b0"
+		    onclick="hideOrShowCode('code2', 'code2_h', 'code2_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    create <span>Target.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code2" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+
+public class Target extends Entity {
+    
+    double velocityModifier = 0.3;
+}
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Now, let’s change how the game is rendered to screen. Instead of 
+		calling the <span class="bold">repaint</span> method on a single <span class="bold">JComponent</span>, such as the GameCanvas, we 
+		can use <span class="bold">individual JComponents</span> (JLabels with Images instead of Text) to represent 
+		the Ball and Target.
+	    </p>
+
+	    <div class="singleElement imageContainer medImage">
+		<img src="" 
+		     th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic2.png' }"
+		     class="img-fluid lazy"></img>
+		<p> Old way: JFrame held one JComponent onto which all game objects were painted/rendered. 
+		    <br/>
+		    <br/>
+		    New way: JFrame holds a multiple JComponents, each of
+		    represents a different game object.
+		</p>
+	    </div>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Let’s also shift some of GameController’s Game Logic responsibilities to another class. 
+		This is because the GameController is now <span class="italics">also</span> responsible for owning and 
+		displaying the Game objects (Target and Ball). Choking a single 
+		class up with the entire program’s workload is rarely a good idea, so 
+		the <span class="bold">LogicHandler</span> class will be introduced to pick up the physics calculations and game-state checking.
+	    </p>
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		GameController
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		First, add the <span class="bold">GameController</span> class to your project.
+	    </p>
+
+	    <!--Code-->
+	    <div id="code3_h" class="codeHead">
+		<button
+		    id="code3_b0"
+		    onclick="hideOrShowCode('code3', 'code3_h', 'code3_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    create <span>GameController.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code3" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+
+import java.awt.Image;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.net.URL;
+import java.util.TimerTask;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+public class GameController extends JFrame implements MouseListener {
+
+    boolean runGame = true;
+    int boardSizeX = 600;
+    int boardSizeY = 600;
+    final long cycleRate = 60;
+    java.util.Timer timer;
+
+    int gameAreaBufferSize = 40;
+    int windowBarHeight = 20;
+
+    ImageIcon ballImage;
+    JLabel ballLabel;
+
+    ImageIcon targetImage;
+    JLabel targetLabel;
+
+    int backgroundWidth = 800;
+    int backgroundHeight = 800;
+    ImageIcon backgroundImage;
+    JLabel backgroundLabel;
+    
+    LogicHandler logicHandler = new LogicHandler();
+
+
+    GameController() {
+
+	super();
+
+	setupJFrame();
+	createEntityLabels();
+	setLocationsOfEntityLabels();
+	loadImages();
+	createTimerTask();
+    }
+
+    void setupJFrame() {
+
+	int totalBufferSize = (2 * gameAreaBufferSize);
+
+	setSize(boardSizeX + totalBufferSize, boardSizeY + totalBufferSize + windowBarHeight);
+	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	setVisible(true);
+	this.setResizable(false);
+	addMouseListener(this);
+    }
+    
+    void createEntityLabels() {
+
+	backgroundLabel = new JLabel();
+	this.add(backgroundLabel);
+
+	targetLabel = new JLabel();
+	this.add(targetLabel);
+
+	ballLabel = new JLabel();
+	this.add(ballLabel);
+    }
+
+    void setLocationsOfEntityLabels() {
+
+	int mainBallDiameter = logicHandler.mainBall.size;
+	int mainBallRadius = mainBallDiameter / 2;
+	int mainBallX = (int) logicHandler.mainBall.xPos
+		+ gameAreaBufferSize 
+		- mainBallRadius
+		+ (int) logicHandler.screenShakeEntity.xPos;
+	int mainBallY = (int) logicHandler.mainBall.yPos 
+		+ gameAreaBufferSize 
+		- mainBallRadius
+		+ (int) logicHandler.screenShakeEntity.yPos;
+	ballLabel.setBounds(mainBallX, mainBallY, mainBallDiameter, mainBallDiameter);
+	
+	int targetDiameter = logicHandler.target.size;
+	int targetRadius = targetDiameter / 2;
+	int targetX = (int) logicHandler.target.xPos 
+		+ gameAreaBufferSize 
+		- targetRadius 
+		+ (int) logicHandler.screenShakeEntity.xPos;
+	int targetY = (int) logicHandler.target.yPos 
+		+ gameAreaBufferSize 
+		- targetRadius
+		+ (int) logicHandler.screenShakeEntity.yPos;
+	targetLabel.setBounds(targetX, targetY, targetDiameter, targetDiameter);
+	
+	int baseLocationX = -100;
+	int baseLocationY = -100;
+	int backgroundX = baseLocationX 
+		+ (int) logicHandler.screenShakeEntity.xPos 
+		+ gameAreaBufferSize;
+	int backgroundY = baseLocationY 
+		+ (int) logicHandler.screenShakeEntity.yPos 
+		+ gameAreaBufferSize;
+	backgroundLabel.setBounds(backgroundX, backgroundY, backgroundWidth, backgroundHeight);
+    }
+    
+    void loadImages() {
+
+	try {
+	    URL url;
+	    Image image;
+
+	    int mainBallDiameter = logicHandler.mainBall.size;
+	    url = this.getClass().getResource("Ball.png");
+	    image = ImageIO.read(url).getScaledInstance(mainBallDiameter, mainBallDiameter, Image.SCALE_SMOOTH);
+	    ballImage = new ImageIcon(image);
+	    ballLabel.setIcon(ballImage);
+	    
+	    int targetDiameter = logicHandler.target.size;
+	    url = this.getClass().getResource("Target.png");
+	    image = ImageIO.read(url).getScaledInstance(targetDiameter, targetDiameter, Image.SCALE_SMOOTH);
+	    targetImage = new ImageIcon(image);
+	    targetLabel.setIcon(targetImage);
+	    
+	    url = this.getClass().getResource("background.png");
+	    image = ImageIO.read(url).getScaledInstance(backgroundWidth, backgroundHeight, Image.SCALE_SMOOTH);
+	    backgroundImage = new ImageIcon(image);
+	    backgroundLabel.setIcon(backgroundImage);
+
+	} catch (Exception e) {
+	    System.out.println("Load failed");
+	    System.err.println(e);
+	}
+    }
+
+
+    void createTimerTask() {
+
+	TimerTask timerTask = new TimerTask() {
+
+	    public void run() {
+
+		if (runGame) {
+
+
+		}
+	    }
+	};
+	timer = new java.util.Timer();
+	timer.schedule(timerTask, 0, 1000 / cycleRate);
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+	int clickX = e.getX();
+	int clickY = e.getY();
+	String clickLocation = clickX + ", " + clickY;
+	System.out.println("Mouse Pressed at " + clickLocation);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
+
+    public static void main(String[] args) {
+
+	GameController gameWindow = new GameController();
+    }
+
+}
+
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>		
+		Notice that most of the 
+		setup has already been taken care of: the class variables and 
+		timer are already present and the mouse interaction is already set up. 
+		(If you want an more in-depth look at what is happening inside the 
+		GameController, I explained it in better detail in part 1).
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>		
+		There are also some new variables in this version of GameController. There is an
+		instance of the <span class="bold">LogicHandler class</span>, which I will cover in a moment. 
+		There are JLabels representing the Ball and Target, 
+		and an associated image reference for each. There
+		is also another JLabel, the backgroundLabel, which is has no gameplay significance but is used for a cool visual effect later.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>		
+		Also notice that I broke up the responsibilities of the 
+		GameController's <span class="bold">constructor</span>. The constructor from part 1 was a 
+		little messy. Now, it’s responsibilities have been have been moved to 5 separate methods that are more human-friendly to read.
+		<br/><br/><span class="tab"></span>	
+		<span class="bold">setupJFrame()</span> prepares a windowed application for viewing.
+		<br/><br/><span class="tab"></span>	
+		<span class="bold">createEntityLabels()</span> initializes the JLabel objects and adds them to the view heirarchy of the JFrame.
+		<br/><br/><span class="tab"></span>	
+		<span class="bold">setLocationsOfEntityLabels()</span> sets initial variables of the ball, target, and backgroundLabel, and sets their 
+		position inside the JFrame.
+		<br/><br/><span class="tab"></span>	
+		<span class="bold">loadImages()</span> attemps to load images from disk and assign them to a JLabel object.
+		<br/><br/><span class="tab"></span>	
+		<span class="bold">createTimerTask()</span> kicks off the game timer, starting the game.
+		<br/><br/>
+	    </p> 
+
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		LogicHandler
+	    </p>
+
+	    <!--Code-->
+	    <div id="code4_h" class="codeHead">
+		<button
+		    id="code4_b0"
+		    onclick="hideOrShowCode('code4', 'code4_h', 'code4_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    create <span>LogicHandler.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code4" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+import java.awt.Point;
+import static java.lang.Math.abs;
+
+public class LogicHandler {
+
+    Ball mainBall;
+    Target target;
+    Entity screenShakeEntity;
+
+    LogicHandler() {
+
+	// Create the ball
+	mainBall = new Ball();
+	mainBall.xPos = 200;
+	mainBall.yPos = 200;
+	mainBall.size = 50;
+
+	// Create the Target
+	target = new Target();
+	target.xPos = 40;
+	target.yPos = 100;
+	target.size = 80;
+
+	// Create the ScreenShakeEntity
+	screenShakeEntity = new Entity();
+	screenShakeEntity.xPos = 0;
+	screenShakeEntity.yPos = 0;
+	screenShakeEntity.size = 0;
+    }
+
+    void physics(int boardSizeX, int boardSizeY) {
+
+	//================================================================
+	//Physics for the target 
+	//================================================================
+
+	// If on the left half of the board, push right
+	if (target.xPos &gt; boardSizeX / 2) {
+
+	    target.xVelocity -= target.velocityModifier;
+	} 
+	// If on the left half of the board, push right
+	else if (target.xPos &lt; boardSizeX / 2) {
+
+	    target.xVelocity += target.velocityModifier;
+	}
+	target.xPos += target.xVelocity;
+
+	//================================================================
+	//Physics for the Ball 
+	//================================================================
+
+	double gravityAcceleration = 0.5;
+
+	// gravity
+	mainBall.yVelocity += gravityAcceleration;
+
+	// Air resistance
+	mainBall.xVelocity *= 0.996;
+	mainBall.yVelocity *= 0.996;
+
+	// collision detection of the four walls
+	int leftWall = 0;
+	int rightWall = boardSizeX;
+	int topWall = 0;
+	int bottomWall = boardSizeY;
+
+	int ballRadius = mainBall.size / 2;
+
+	// Used for setting the screenShakeEntity velocity
+	float velocityBumpX = 0;
+	float velocityBumpY = 0;
+
+	if (mainBall.xPos - ballRadius &lt; leftWall) {
+
+	    mainBall.xVelocity = abs(mainBall.xVelocity) * mainBall.bounciness;
+	    mainBall.xPos = leftWall + ballRadius;
+	    velocityBumpX = (float) mainBall.xVelocity;
+	}
+	if (mainBall.xPos + ballRadius &gt; rightWall) {
+
+	    mainBall.xVelocity = -abs(mainBall.xVelocity) * mainBall.bounciness;
+	    mainBall.xPos = rightWall - ballRadius;
+	    velocityBumpX = (float) mainBall.xVelocity;
+	}
+	if (mainBall.yPos - ballRadius &lt; topWall) {
+
+	    mainBall.yVelocity = abs(mainBall.yVelocity) * mainBall.bounciness;
+	    mainBall.yPos = topWall + ballRadius;
+	    velocityBumpY = (float) mainBall.yVelocity;
+	}
+	if (mainBall.yPos + ballRadius &gt; bottomWall) {
+
+	    mainBall.yVelocity = -abs(mainBall.yVelocity) * mainBall.bounciness;
+	    mainBall.yPos = bottomWall - ballRadius;
+	    velocityBumpY = (float) mainBall.yVelocity;
+	}
+
+	float bumpThreshold = 5;
+	if (velocityBumpY &gt; -bumpThreshold &amp;&amp; velocityBumpY &lt; bumpThreshold) {
+	    velocityBumpY = 0;
+	}
+	if (velocityBumpX &gt; -bumpThreshold &amp;&amp; velocityBumpX &lt; bumpThreshold) {
+	    velocityBumpX = 0;
+	}
+
+	mainBall.xPos += mainBall.xVelocity;
+	mainBall.yPos += mainBall.yVelocity;
+
+	//================================================================
+	//Physics for the screenShakeEntity
+	//================================================================
+
+	// Add the bump from the ball colliding with the wall
+	screenShakeEntity.xVelocity += velocityBumpX / 3;
+	screenShakeEntity.yVelocity += velocityBumpY / 3;
+
+	// Add the spring effect that moves the screenShakeEntity back to (0, 0)
+	screenShakeEntity.xVelocity -= screenShakeEntity.xPos * (0.5);
+	screenShakeEntity.yVelocity -= screenShakeEntity.yPos * (0.5);
+
+	screenShakeEntity.xVelocity *= 0.9;
+	screenShakeEntity.yVelocity *= 0.9;
+
+	screenShakeEntity.xPos += screenShakeEntity.xVelocity;
+	screenShakeEntity.yPos += screenShakeEntity.yVelocity;
+    }
+
+    boolean gameIsOver(){
+    
+	double distanceFromBallToGoal_X = mainBall.xPos - target.xPos;
+	double distanceFromBallToGoal_Y = mainBall.yPos - target.yPos;
+	
+	double absoluteDistance = Math.sqrt((distanceFromBallToGoal_X * distanceFromBallToGoal_X)
+		+ (distanceFromBallToGoal_Y * distanceFromBallToGoal_Y));
+
+	double threshold = (target.size - mainBall.size) / 2;
+	
+	if (absoluteDistance &lt;= threshold)
+	    return true;
+
+	return false;
+    }
+}	 
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		While the GameController owns the <span class="bold">representing</span> JLabels and 
+		associated Images, the LogicHandler owns the <span class="bold">actual</span> Entity 
+		objects of ball, target, and screenShakeEntity.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Right now, LogicHandler only has two methods: it’s <span class="bold">constructor</span> and
+		the <span class="bold">physics</span> method. In the constructor, the 3 Entity objects
+		are initialized. The physics method is very similar to the
+		physicsCalculations method from lesson 1.
+	    </p>
+
+	    <div class="singleElement imageContainer medImage">
+		<img src="" 
+		     th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic3.png' }"
+		     class="img-fluid lazy"></img>
+		<p> Your codebase should now look like this: <span class="bold">5 classes</span> and <span class="bold">3 images</span>. It doesn't matter what the name
+		    of the <span class="bold">package</span> is, as long as all java files start with the same package declaration</p>
+	    </div>
+
+	    <!--Seperator-->
+	    <div class="singleElement sep"></div>
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		Test run
+	    </p>
+
+
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		There 
+		is only one more thing to do before we give a test run- the <span class="bold">GameController's timer</span> must make 
+		a call to the <span class="bold">LogicHandler’s physics</span> method, and the JLabels representing the Game 
+		Objects must then be repositioned to the location of <span class="bold">logicHandler.ball</span> and <span class="bold">logicHandler.target</span>
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Back inside the GameController, there is a method called <span class="bold">createTimerTask</span> 
+		that is called from the constructor. Go inside that method and 
+		replace the <span class="bold">TimerTask’s run</span> method with-
+	    </p>
+
+
+	    <!--Code-->
+	    <div id="code5_h" class="codeHead">
+		<button
+		    id="code5_b0"
+		    onclick="hideOrShowCode('code5', 'code5_h', 'code5_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    replace inside <span>GameController.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code5" class="singleElement code prettyprint linenums:142" style="padding-left: 0;">
+public void run() {
+
+    if (runGame) {
+
+	logicHandler.physics(boardSizeX, boardSizeY);
+
+	setLocationsOfEntityLabels();
+
+	if (logicHandler.gameIsOver()) {
+	    runGame = false;
+	}
+    }
+}
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		This game loop is very similar to part 1’s Game loop. First, the physics are computed. Then, 
+		the visuals is updated with a call to <span class="bold">setLocationsOfEntityLabels</span>.
+
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Run the program- it should look like this...
+	    </p>
+
+	    <div class="singleElement imageContainer smallImage">
+		<img src="" 
+		     th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/gif5.gif' }"
+		     class="img-fluid lazy"></img>
+		<p> Your codebase should now look like this: <span class="bold">5 classes</span> and <span class="bold">3 images</span>. It doesn't matter what the name
+		    of the <span class="bold">package</span> is, as long as all java files start with the same package declaration</p>
+	    </div>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Notice that wobble every time the ball strikes the floor? That is the effect of 
+		the <span class="bold">screenShakeEntity</span>, defined in the LogicHandler.
+		When the ball collides with a wall in logicHandler.physics, the screenShakeEntity's <span class="bold">velocity</span> is modified, 
+		which in turn changes the <span class="bold">position</span>. The offset of the screenShakeEntity is then added to the positons of the ball and target JLabels.
+	    </p>
+
+	    <!--Seperator-->
+	    <div class="singleElement sep"></div>
+
+	    <!--LEAVE IT BITCH IM DRUNK AND ITS A GOOD IDEA-->
+	    <!--Header-->
+	    <p class="singleElement head">
+		Adding interaction
+	    </p>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		The GameController is already to configured to listen to 
+		mouse input (with the <span class="bold">mousePressed</span> method from <span class="bold">MouseListener</span>). But like I said earlier, the GameController is
+		shifting Game Logic-oriented tasks to the LogicHandler. The GameController is just catching mouse
+		input and sending it the <span class="bold">logicHandler.throwBall</span> method. 
+		<br/><span class="tab"></span> Add a method inside LogicHandler to translate the
+		mouseclick into an action, and a method to reset the game variables too.
+	    </p>
+
+	    <!--Code-->
+	    <div id="code6_h" class="codeHead">
+		<button
+		    id="code6_b0"
+		    onclick="hideOrShowCode('code6', 'code6_h', 'code6_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    add to <span>LogicHandler.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code6" class="singleElement code prettyprint linenums:147" style="padding-left: 0;">
+void throwBall(int clickX, int clickY){
+
+    double distanceX = (float)clickX - mainBall.xPos;
+    double distanceY = (float)clickY - mainBall.yPos;
+
+    double pushX = distanceX / 10;
+    double pushY = distanceY / 10;
+
+    mainBall.xVelocity += pushX;
+    mainBall.yVelocity += pushY;
+}
+
+void resetAllGameObjects(){
+
+    mainBall.xPos = 300;
+    mainBall.yPos = 300;
+    mainBall.size = 50;
+
+    screenShakeEntity.xPos = 0;
+    screenShakeEntity.yPos = 0;
+    screenShakeEntity.size = 0;
+}
+	    </pre>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Finally, update the <span class="bold">mouseListener</span> method to call the throwBall method
+	    </p>
+
+	    <!--Code-->
+	    <div id="code7_h" class="codeHead">
+		<button
+		    id="code7_b0"
+		    onclick="hideOrShowCode('code7', 'code7_h', 'code7_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    replace inside <span>GameController.java</span>
+
+		</p>
+	    </div>
+	    <pre id="code7" class="singleElement code prettyprint linenums:160" style="padding-left: 0;">
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+	if (runGame) {
+
+	    int clickX = e.getX() - gameAreaBufferSize;
+	    int clickY = e.getY() - gameAreaBufferSize - windowBarHeight;
+
+	    logicHandler.throwBall(clickX, clickY);
+	} else {
+
+	    logicHandler.resetAllGameObjects();
+	    runGame = true;
+	}
+    }
+	    </pre>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		...<span class="bold">And that's it!</span> run the program, and the game should function exactly like
+		it did in part 1.
+	    </p>
+
+	    <div class="signature">
+		by Davis Burnside
+		<br/>
+		Posted Dec 26 2017
+	    </div>
+
+	</div>
+</div>

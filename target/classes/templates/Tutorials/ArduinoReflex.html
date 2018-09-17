@@ -1,0 +1,642 @@
+<div th:id="${tutorialId}" class="contentContainer stripedBorder">
+    
+	<div id="articleContent">
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		Arduino 3-player reflex game
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		I've been looking forward to making an Arduino post for a while, but I couldn't settle
+		on an idea that would be simple enough for a tutorial. But a few days ago I was
+		playing keep-away with my roommate's dog and I realized... everybody loves a reflex game- even dogs.
+		<br/><span class="tab"></span>
+		The Arduino is the perfect hardware platform for a reflex game. Its clock speed is
+		fast enough to handle split-second logic decisions, and the software / hardware 
+		is extremely simple to make. (<span class="bold">Input</span> is handled by buttons and a vibration sensor,
+		<span class="bold">output</span> is handled with LEDs and console statements).
+
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Here is a video of it in action. When the blue LED is on, the Arduino listens for a vibration,
+		which is triggered by dropping an object on the table. When the vibration sensor is tripped, 
+		the <span class="bold">blue</span> LED
+		turns off and the <span class="bold">yellow</span>
+		LED turns on. The first player to press their
+		button wins, and their corresponding <span class="bold">red</span> LED activates. If a button is pressed before the vibration sensor is triggered / yellow light is on, that player is disqualified
+		for the round. Press the Reset button (out of camera view) and everybody is ready to play again.
+
+	    </p>
+
+	    <div class="iframeContainterDiv"
+		 style="width: 580px;">
+		<iframe 
+		    style="text-align:center;"
+		    width="500" 
+		    height="315" 
+		    src="https://www.youtube.com/embed/l-d4C34r-Kk" 
+		    frameborder="0" 
+		    allow="autoplay; encrypted-media" 
+		    allowfullscreen="true">
+		</iframe>
+	    </div>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		I was really dreading having to draw-out the circuit diagrams for this post, but I found a 
+		<span class="italics">really cool</span> website that not only lets you drag-and-drop all the physical components,
+		but you can run code on a virtualized arduino too! 
+		<a href="https://www.tinkercad.com/things/9fSLeXs1oCg-reflexgamearduino/editel"> 
+		    You can view / modify the entire virtualized end result here.
+		</a> 
+
+	    </p>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		For all the Arduino posts I make, I will assume you have wires, a breadboard
+		to make the connections, and the device itself. I am using the Uno R3, which is only about $15.
+		The rest of the hardware needed for this post comes with most Arduino starter kits, which are also inexpensive. 
+		<br/><span class="tab"></span>
+		I will also assume you have the Arduino's IDE, 
+		<a href="https://www.arduino.cc/en/Main/Software"> 
+		    which you can download for free from the Arduino website.
+		</a> 	
+
+	    </p>
+
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		How does it work?
+	    </p>
+
+	    <!--Header-->
+	    <p class="singleElement miniHead">
+		Step 1: The Piezo 
+	    </p>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		Vibration is detected with a <span class="bold">piezoelectric sensor</span>. When the sensor is disturbed, it generates
+		a small voltage between its two terminals. The Arduino can sense this voltage if the
+		wires and software are configured correctly.
+
+	    </p>
+
+	    <!--	    Image
+			<div class="singleElement img img_small">
+			    <img src="../../images/articles/ArduinoReflex/pic7.jpg" 
+				 class="img-fluid"></img>
+			    <p>
+				<a href="https://youtu.be/qun4HYWeOBg"> 
+				    This video by tbg3tbg3
+				</a> 	
+				gives a good example on the operation of a Piezo.
+			    </p>
+			</div>-->
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		If you are following along, wire up the Arduino and breadboard like this. Note that all
+		<span class="bold">Black</span> wires are connected to <span class="bold">ground</span>.
+	    </p>
+	    
+	    <div class="singleElement imageContainer medImage">
+		<img src="" 
+		th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic4.png' }"
+		class="img-fluid lazy"></img>
+	    </div>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		The Piezo has 2 terminals. One is connected to ground, the other is connected
+		to port A0. The A0-A5 ports are <span class="bold">Analog ports</span>, which means they
+		can detect any voltage between 0 and 5 volts. <span class="bold">Digital</span> ports can only
+		detect voltage-high (5V) or voltage-low (0V).
+		<br/><span class="tab"></span>
+		A 1 million Ohm resistor allows the Piezo's value to be read clearly. (Why 1 million Ohms? 
+		Fricked if I know. 
+		I had to look up someone else's guide to wire the Piezo correctly)
+	    </p>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		To get a good understanding how it will read the Piezo, run this mini
+		program on your Arduino.
+	    </p>
+
+	    <!--Code-->
+	    <div id="code0_h" class="codeHead">
+		<button
+		    id="code0_b0"
+		    onclick="hideOrShowCode('code0', 'code0_h', 'code0_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		</p>
+	    </div>
+	    <pre id="code0" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+int piezoPin = A0;
+double voltageThreshold = 0.05;
+
+void setup() {
+
+  pinMode(piezoPin, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+
+    // Read the value of the Piezo
+    int piezoADC = analogRead(piezoPin);
+    float piezoV = piezoADC / 1023.0 * 5.0;
+
+    // If the value exceeds the threshold, output to the console
+    if (piezoV >= voltageThreshold) {
+
+      String statement = "Hit detected with voltage:  " + String(piezoV);
+      Serial.println(statement);
+    }
+
+    delay(50);
+}
+	    </pre>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		If you tap the Piezo with your finger, the Arduino should read a voltage of around 0.2 V or so.
+		Since this exceeds the <span class="bold">voltageThreshold</span> value, the IDE's console should display a message.
+		Hitting it harder will momentarily read a higher voltage, up to 5V.
+		
+	    </p>
+
+	    <!--Header-->
+	    <p class="singleElement miniHead">
+		Step 2: Game Logic
+	    </p>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		The Piezo is an example of <span class="bold">physical logic</span>: Something that
+		operates through real-world interaction.
+		But almost all of the
+		work is done by the finished product is through <span class="bold">virtual logic</span>- 
+		the code running inside the Arduino. 
+		The Arduino's incredible usefulness comes from its ability to seamlessly mix physical and virtual logic: To allow hardware
+		to control software and vice versa.
+	    </p>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		<span class="bold">Make sure the Arduino is powered off</span>, then
+		add the following components to the circuit. Don't remove the Piezo and wires from earlier.
+	    </p>
+	    
+	    <div class="singleElement imageContainer medImage">
+		<img src="" 
+		th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic2.png' }"
+		class="img-fluid lazy"></img>
+	    </div>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		To test your wiring, delete the previous code and run this instead.
+		When you press the button, the LEDs should alternate between on and off.
+		If you hold the button pressed, the LEDs will continue to oscillate- (10 times a second,
+		because of the <span class="bold">delay</span> call at line 31).
+	    </p>
+
+	    <!--Code-->
+	    <div id="code1_h" class="codeHead">
+		<button
+		    id="code1_b0"
+		    onclick="hideOrShowCode('code1', 'code1_h', 'code1_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		</p>
+	    </div>
+	    <pre id="code1" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+int LED1_pin = 12;
+int LED2_pin = 11;
+int button_pin = 10;
+
+boolean LED1isLit = true;
+
+void setup() {
+
+  pinMode(LED1_pin, OUTPUT);
+  pinMode(LED2_pin, OUTPUT);
+  pinMode(button_pin, INPUT_PULLUP);
+}
+
+void loop() {
+
+  if (digitalRead(button_pin) == LOW) {
+
+    LED1isLit = !LED1isLit;
+  }
+
+  if (LED1isLit) {
+
+    digitalWrite(LED1_pin, HIGH);
+    digitalWrite(LED2_pin, LOW);
+  }
+  else {
+    digitalWrite(LED1_pin, LOW);
+    digitalWrite(LED2_pin, HIGH);
+  }
+
+  delay(100);
+}
+	    </pre>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		The max current through an Arduino port is 40 milliamps, but the 
+		recommended threshold is around 20 milliamps. When a digital port
+		outputs an electric current with the <span class="bold">digitalWrite</span> command, 
+		it does so at <span class="bold">5 Volts</span>.
+		<br/><span class="tab"></span>
+
+		<a href="https://www.rapidtables.com/electric/ohms-law.html"> 
+		    5 Volts = 0.02 Amps  *  250 Ohms, 
+		</a> so a resistor of around <span class="bold">250 Ohms</span> is needed between the port and ground.
+		A more-common <span class="bold">220 Ohm</span>
+		resistor (Stripe pattern: Red Red Brown) will do the trick just fine.
+
+	    </p>
+
+
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		Why doesn't the <span class="bold">button</span> need a resistor, you might ask? Look at line 11, how the 
+		pin mode is set to <span class="bold">INPUT_PULLUP</span>.
+
+		<a href="https://www.arduino.cc/en/Tutorial/DigitalPins"> 
+		    According to the Arduino website
+		</a>,<span class="italics"> "There are 20K pullup resistors built into the Atmega chip that can be accessed
+		from software. These built-in pullup resistors are 
+		accessed by setting the pinMode() as INPUT_PULLUP. 
+		This effectively inverts the behavior of the INPUT mode,
+		where HIGH means the sensor is off, and LOW means the sensor is on."</span>
+		<br/><br/><span class="tab"></span>
+		Unlike ports 11 &amp; 12 that feed a <span class="bold">current</span> to the LEDs, pin 10
+		is reading a <span class="bold">voltage</span>. When the button connected to pin 10 is pressed, pin 10 has a direct
+		line to ground. Since the port is at 5V, ground is 0V, and the <span class="bold">INTERNAL_PULLUP</span>
+		property gives around 20 KiloOhms of resistance, the current flowing out of
+		pin 10 is tiny (less than a milliamp), and therefore in the safe range, even with no 
+		external resistor.
+		With the LEDs, it is a different story. There is no OUTPUT_PULLUP pin mode, so an
+		external resistor must be used to keep your board from getting 
+		<a href="https://youtu.be/6-_AgqpjOiU"> 
+		    toasty 
+		</a>
+
+
+	    </p>
+	    
+	    <div class="singleElement imageContainer medImage">
+		<img src="" 
+		th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic8.jpg' }"
+		class="img-fluid lazy"></img>
+		<p>
+		    Here is a good representation of an <span class="bold">Internal pullup resistor</span>
+		    from 
+		    <a href="http://makebright.com/2012/02/arduino-101-meetup-prep-day-6-hacking-toys/"> 
+			MakeBright.com
+		    </a>. 
+		    <br/><br/>
+		    When the switch is open (button unpressed), the pin reads as
+		    <span class="bold">HIGH</span>. When the switch is closed (button pressed), the current
+		    flows from an internal 5V source, through the internal resistor,
+		    and out the pint to Ground. This make the port read <span class="bold">LOW</span>.
+
+
+		</p>
+	    </div>
+
+
+
+	    <!--Header-->
+	    <p class="singleElement miniHead">
+		Step 3: Player Interaction
+	    </p>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		The <span class="bold">Player Interaction</span> wiring uses a similar setup of buttons and LEDs
+		as <span class="bold">Game Control</span>. Three buttons each connect an Arduino pin to ground.
+		Three LEDS connect pins to a 220 Ohm resistor, then to ground. To keep the breadboard
+		from getting cluttered, I wired the buttons to the north-facing ground strip.
+	    </p>
+	    
+	    <div class="singleElement imageContainer medImage">
+		<img src="" 
+		th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic3.png' }"
+		class="img-fluid lazy"></img>
+	    </div>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		I did not make test code for this section- if you wired part 2 correctly,
+		you can probably do the same for this part. Instead, here is the code for the final 
+		product. 
+	    </p>
+
+	    <!--Code-->
+	    <div id="code2_h" class="codeHead">
+		<button
+		    id="code2_b0"
+		    onclick="hideOrShowCode('code2', 'code2_h', 'code2_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		</p>
+	    </div>
+	    <pre id="code2" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+
+int player1ButtonPin = 5;
+int player2ButtonPin = 6;
+int player3ButtonPin = 7;
+int resetButtonPin = 11;
+int piezoPin = A0;
+
+int player1LedPin = 2;
+int player2LedPin = 3;
+int player3LedPin = 4;
+int gameStatusLedPin1 = 12;
+int gameStatusLedPin2 = 13;
+
+int winner = 0;
+boolean player1disq = false;
+boolean player2disq = false;
+boolean player3disq = false;
+boolean gameIsPlaying = true;
+boolean ballHasHitTable = false;
+double voltageThreshold = 0.05;
+
+//============================================================================
+
+void setup() {
+
+  // Because there are no resistors used with the buttons, I use the port's internal pullup resistor with INPUT_PULLUP
+  pinMode(player1ButtonPin, INPUT_PULLUP);
+  pinMode(player2ButtonPin, INPUT_PULLUP);
+  pinMode(player3ButtonPin, INPUT_PULLUP);
+  pinMode(resetButtonPin, INPUT_PULLUP);
+  pinMode(piezoPin, INPUT);
+
+  pinMode(gameStatusLedPin1, OUTPUT);
+  pinMode(gameStatusLedPin2, OUTPUT);
+  pinMode(player1LedPin, OUTPUT);
+  pinMode(player2LedPin, OUTPUT);
+  pinMode(player3LedPin, OUTPUT);
+
+  Serial.begin(9600);
+}
+
+//============================================================================
+
+void loop() {
+
+  if (gameIsPlaying) {
+
+    // Read the value of the Piezo
+    int piezoADC = analogRead(piezoPin);
+    float piezoV = piezoADC / 1023.0 * 5.0;
+
+    // If the value exceeds the threshold, the ball has hit the table
+    if (!ballHasHitTable &amp;&amp; piezoV &gt;= voltageThreshold) {
+
+      ballHasHitTable = true;
+      String voltage = "Hit detected with voltage:  " + String(piezoV);
+      Serial.println(voltage);
+    }
+
+    // check if any player's buttons have been pressed yet
+    int player1Read = digitalRead(player1ButtonPin);
+    int player2Read = digitalRead(player2ButtonPin);
+    int player3Read = digitalRead(player3ButtonPin);
+
+    // Determine if any players have won or been disqualified
+    if (ballHasHitTable) {
+      checkForWinner( player1Read, player2Read, player3Read);
+    }
+    else {
+      checkForEarlyButtonPresses( player1Read, player2Read, player3Read);
+    }
+  }
+
+  // Display the winning lights if there is a winner
+  showWinnerLEDifNeeded();
+
+  // Check if the reset button has been pressed
+  int resetButtonRead = digitalRead(resetButtonPin);
+  if (resetButtonRead == LOW) {
+
+    resetGame();
+  }
+
+  showGameStatusLEDs();
+
+  delay(50);
+}
+
+//============================================================================
+
+void showGameStatusLEDs() {
+
+  if (gameIsPlaying) {
+
+    if (ballHasHitTable) {
+
+      digitalWrite(gameStatusLedPin1, HIGH);
+      digitalWrite(gameStatusLedPin2, LOW);
+    }
+    else {
+      digitalWrite(gameStatusLedPin1, LOW);
+      digitalWrite(gameStatusLedPin2, HIGH);
+    }
+  }
+  else {
+    digitalWrite(gameStatusLedPin1, LOW);
+    digitalWrite(gameStatusLedPin2, LOW);
+  }
+}
+
+//============================================================================
+
+void showWinnerLEDifNeeded() {
+
+  if (winner == 1) {
+    digitalWrite(player1LedPin, HIGH);
+  }
+  else if (winner == 2) {
+    digitalWrite(player2LedPin, HIGH);
+  }
+  else if (winner == 3) {
+    digitalWrite(player3LedPin, HIGH);
+  }
+  else {
+    digitalWrite(player1LedPin, LOW);
+    digitalWrite(player2LedPin, LOW);
+    digitalWrite(player3LedPin, LOW);
+  }
+}
+
+//============================================================================
+
+void checkForEarlyButtonPresses(int player1Read, int player2Read, int player3Read) {
+
+  if (player1Read == LOW &amp;&amp; !player1disq) {
+
+    player1disq = true;
+    Serial.println("player 1 too early");
+  }
+  if (player2Read == LOW &amp;&amp; !player2disq) {
+
+    player2disq = true;
+    Serial.println("player 2 too early");
+  }
+  if (player3Read == LOW &amp;&amp; !player3disq) {
+
+    player3disq = true;
+    Serial.println("player 3 too early");
+  }
+}
+
+//============================================================================
+
+void checkForWinner(int player1Read, int player2Read, int player3Read) {
+
+  if (player1Read == LOW &amp;&amp; !player1disq &amp;&amp; winner == 0) {
+
+    winner = 1;
+    gameIsPlaying = false;
+    Serial.println("player 1 wins");
+  }
+  else if (player2Read == LOW &amp;&amp; !player2disq &amp;&amp; winner == 0) {
+
+    winner = 2;
+    gameIsPlaying = false;
+    Serial.println("player 2 wins");
+  }
+  else if (player3Read == LOW &amp;&amp; !player3disq &amp;&amp; winner == 0) {
+
+    winner = 3;
+    gameIsPlaying = false;
+    Serial.println("player 3 wins");
+  }
+}
+
+//============================================================================
+
+void resetGame() {
+
+  winner = 0;
+  gameIsPlaying = true;
+  ballHasHitTable = false;
+  player1disq = false;
+  player2disq = false;
+  player3disq = false;
+
+  Serial.println("reset game");
+}
+
+	    </pre>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		Let's break down the code. Lines 2-12 assign names to each pin used, while
+		lines 14-20 declare the variables needed to keep track of game state. Since
+		this game relies on very simple logic, simple booleans can be used a lot here.
+		<br/><br/><span class="tab"></span>
+		The <span class="bold">setup</span> method has 2 jobs: To configure all the hardware pins, and to open a Serial 
+		connection. The <span class="bold">loop</span> method is a bit lengthier, but it subdivides it's tasks to 5 
+		simple helper methods
+		<br/><br/><span class="tab"></span>
+		<span class="bold">checkForWinner</span>: called every <span class="bold">loop</span> run, but only after the piezo has detected the ball drop. It 
+		checks which player, if any, have pressed their button.
+		<br/><br/><span class="tab"></span>
+		<span class="bold">checkForEarlyButtonPresses</span>: also called every <span class="bold">loop</span> run, but only if the piezo 
+		<span class="italics">has not</span> yet detected a drop. If this method detects that a player's button is pressed,
+		that player's "disqualified" flag is set to true.
+		<br/><br/><span class="tab"></span>
+		<span class="bold">showWinnerLEDifNeeded</span>: called every <span class="bold">loop</span> run
+		<br/><br/><span class="tab"></span>
+		<span class="bold">showGameStatusLEDs</span>: called every <span class="bold">loop</span> run 
+		<br/><br/><span class="tab"></span>
+		<span class="bold">resetGame</span>: Only called when the <span class="bold">reset</span> button is pressed.
+	    </p>
+	    
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		Here is the wiring diagram of the finished product. You didn't think my wires
+		really looked that pretty, did you?
+	    </p>
+
+	    <div class="row">
+		<div class="col-md-6">
+		    <div class="singleElement imageContainer medImage">
+			<img src="" 
+		th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic1.png' }"
+		class="img-fluid lazy"></img>
+		    </div>
+
+		</div>
+		<div class="col-md-6">
+		    <div class="singleElement imageContainer medImage">
+			<img src="" 
+		th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic5.jpg' }"
+		class="img-fluid lazy"></img>
+		    </div>
+
+		</div>
+
+
+	    </div>
+	    
+	    
+	    	<div class="signature">
+	    by Davis Burnside
+	    <br/>
+	    Posted April 11 2018
+	</div>
+
+	</div>
+</div>

@@ -1,0 +1,4 @@
+cd /Users/davisburnside/NetBeansProjects/NewWebsite_V1/target
+ jar -uf buildX.jar .ebextensions
+
+

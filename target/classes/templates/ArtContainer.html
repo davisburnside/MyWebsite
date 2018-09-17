@@ -1,0 +1,84 @@
+<div id="artContainer" class="contentContainer stripedBorder" style="display:none;">
+
+    <div class="infoBar">
+	<span>My works</span>
+    </div>
+    <div id="purchasePrompt">
+	For information about purchasing originals, <br/> please visit the Contact page
+    </div>
+
+    <div class="artworkObject" 
+	 th:each="artwork : ${artworkArray}"
+	 th:object="${artwork}">
+
+	<!--Basic info-->
+	<div class="artworkBasicInfo row">
+	    <span class="col-xs-12 col-sm-4" th:text="${artwork.name}"/>
+	    <span class="col-xs-12 col-sm-4" th:text="${artwork.dimensions}"/>
+	    <span class="col-xs-12 col-sm-4" th:text="${artwork.medium}"/>
+	</div>
+
+	<!--description-->
+	<p class="artDescription" th:if="${artwork.containsKey('desc')}" th:text="${artwork.desc}">
+	</p>
+
+	<!--image-->
+	<img class="lazy artworkObjectImage" th:attr="data-src=*{ '../../images/portfolioArt/' + filename }" 
+	     src="../../images/loading.gif"/>
+
+
+	<div th:if="${artwork.containsKey('productCategories')}">
+
+	    <!--category buttons-->
+	    <div class="productCategories"
+		 th:id="${'productContainer' + artwork.id}">
+
+		<div class="row">
+
+		    <div class="col-xs-12 col-sm-4 productCategoryButton pointerCursor"	
+			 th:each='productCategory : ${artwork.productCategories}'		     
+			 th:onclick="${'showProductInfo(' + artwork.idAlt + ',' + productCategory['key'] + ')'}"
+			 th:switch="${productCategory['key']}"
+			 th:classappend="${productCategory['key']}">
+
+			<span th:case="clothing"> Clothing</span>
+			<span th:case="decor"> Wall Decor</span>
+			<span th:case="other"> Other</span>
+		    </div>
+		</div>
+	    </div>
+
+	    <!--clothing-->
+	    <div class="productDropdownContainer row"
+		 th:if="${artwork.productCategories.containsKey('clothing')}"
+		 th:id="${'productDropdownContainerClothing' + artwork.id }">
+		<div class="col-xs-12 col-sm-4"
+		     th:each='product : ${artwork.productCategories.clothing}'
+		     th:id="${product}">
+		</div>
+	    </div>
+
+	    <!--decor-->
+	    <div class="productDropdownContainer row"
+		 th:if="${artwork.productCategories.containsKey('decor')}"
+		 th:id="${'productDropdownContainerDecor' + artwork.id }">
+		<div class="col-xs-12 col-sm-4"
+		     th:each='product : ${artwork.productCategories.decor}'
+		     th:id="${product}">
+		</div>
+	    </div>
+
+	    <!--other-->
+	    <div class="productDropdownContainer row"
+		 th:if="${artwork.productCategories.containsKey('other')}"
+		 th:id="${'productDropdownContainerOther' + artwork.id }">
+		<div class="col-xs-12 col-sm-4"
+		     th:each='product : ${artwork.productCategories.other}'
+		     th:id="${product}">
+		</div>
+	    </div>
+	</div>
+
+	<div style="margin-top: 200px; margin-bottom: 200px;" class="infoBar" th:if="${artwork.containsKey('infoBreak')}"><span>Earlier works</span></div>
+    </div>
+</div>

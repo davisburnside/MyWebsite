@@ -1,0 +1,33 @@
+<div id="tutorialsContainer" class="contentContainer stripedBorder" style="display:none;">
+
+    <div class="infoBar">
+	<span> Tutorials </span>
+    </div>
+    
+    <div class="tutorialPreviewObject bevelCorner mouseoverHighlight1" 
+	th:each="tutorial : ${tutorialsArray}" 
+	th:id="${tutorial.id}"	    
+	th:object="${tutorial}">
+	
+	<img class="cornerBevelTL noDrag" src="../../images/cornerTriangleSmallTL.png"/>
+	
+	<div th:id="*{id}"
+	    class="row pointerCursor " 
+	    style="width:100%; height: 100%; margin: 0px; padding: 10px;"
+	    onclick="javascript:loadIndividualTutorialContainer(this.id, true)">	    
+	    <div class="col-sm-3 col-xs-12" style="padding:0">
+		<div style="margin:0px; width: 100%;" >
+		    <img class="tutorialPreviewImage" style="display: block; margin: 0 auto;"
+			th:src="|../../images/Tutorials/*{id}/preview.png|"></img>
+		</div>
+	    </div>
+	    <div class="col-sm-9 col-xs-12" style="padding:10px 20px 0 10px;">
+		<div style="max-width: 500px; margin-top: 10px;">
+		    <p th:text="*{title}" style=" font-size: 20px; font-weight: 600"></p>
+		    <p th:text="*{desc}" style=" font-size: 14px;"></p>
+		</div>
+	    </div>	    
+	</div>
+    </div>
+    
+</div>

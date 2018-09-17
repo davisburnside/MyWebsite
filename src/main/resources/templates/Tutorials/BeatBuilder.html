@@ -1,0 +1,1289 @@
+<div th:id="${tutorialId}" class="contentContainer stripedBorder">
+    
+	<div id="articleContent">
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		Java Jams: Building Beats
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		The last two posts focused on creating the elements of a video game 
+		(Accepting user input in real-time, sending that input to the engine / controller,
+		rendering the results…). Creating games is great programming practice, 
+		but it’s important to practice in other areas as well.
+		<br/><span class="tab"></span>
+		Another great exercise to try to replicate a real-world machine,
+		purely in software, keeping the functionality of the original and maybe adding your
+		own desired features.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		But creating something in <span class="italics">software</span> allows a lot more
+		abstractability than something in <span class="italics">reality</span>.
+		For example, let’s say you want to make a program to simulate a car. How far do you go?
+		Do you represent it by dot on a 2D map, like with a GPS? Or with a textured 3D model, like
+		a racing game? Do you simulate the strengths and stresses of every inch of the car's frame, like
+		the manufacturer engineers? 
+		<br/><span class="tab"></span>
+		Imagine abstracting a car about as far as you can in code. 
+		You make a  <span class="bold">Car</span> class with 2 variables and 2 methods.
+		<br/><br/>
+
+	    </p>
+
+	    <pre class="singleElement code">
+
+int distanceTraveled = 0;
+boolean isGoing = true;
+
+void go(int speed){
+
+    isGoing = true;
+    distanceTraveled += speed;
+}
+
+void stop(){
+ 
+    isGoing = false;
+}
+	    </pre>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		How would the user interact with your "car"? Maybe the <span class="bold">go</span> method is called on
+		a timer, on the condition that (isGoing == true). What else is there to do?
+
+		<br/> <span class="tab"></span>
+
+		For a more useful example, closer to reality, maybe you add new 
+		variables and functions, create a GUI that the user 
+		can track their virtual car with, using the mouse or keyboard to control it.
+
+		<br/> <span class="tab"></span>
+		Or maybe it’s not that far abstracted at all- maybe your program is used by an 
+		actual self-driving car, and the correct execution of your <span class="bold">go</span> method 
+		means the difference between a uneventful commute or a lawsuit. Of course, 
+		the software behind self driving cars will be a bit more complex than 2 methods
+		and variables...
+
+	    </p>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		...But don't make the assumption that a machine or program needs to be
+		<span class="italics">complex</span> to work correctly. For this exercise, we will simulate a real-world device
+		in only a few hundred lines.
+	    </p>
+
+	    <!--Seperator-->
+	    <div class="singleElement sep"></div>
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		Initial setup
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Create a new project in your IDE of choice. Download the sound files used for this example and place them
+		in the same directory where the code will be.
+	    </p>
+
+	    	    <!--Link-->
+	    <a class="singleElement link mouseoverHighlight1" 
+	       href='/downloadFile/BeatBuilder_resources'>
+		<img src="../../images/External/downloadArrow.png">   
+		<span> Download sound files only </span>
+	    </a>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		We will be building the project by introducing code files and gradually modifying them.
+		If instead you want the finished code, you can download the sounds files and code files below
+	    </p>
+	    	    
+	    <!--Link-->
+	    <a class="singleElement link mouseoverHighlight1" 
+	       href='/downloadFile/BeatBuilder_ALL'>
+		<img src="../../images/External/downloadArrow.png">   
+		<span> Download all files </span>
+	    </a>
+
+	    <!--Seperator-->
+	    <div class="singleElement sep"></div>
+
+
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		The BeatBuilder
+	    </p>
+
+	    
+	    <div class="singleElement imageContainer smallImage">
+		<img src="" 
+		th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic1.png' }"
+		class="img-fluid lazy"></img>
+		<p> screenshot from M4SONIC's YouTube page</p>
+	    </div>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		The machine in the picture is an 
+		<a href="https://www.ableton.com/en/products/controllers/launchpad/">
+		    Ableton LaunchPad.</a>
+		Each button plays a different sound, and the sound kits can be swapped out.
+		I'm not sure what the buttons on the sides do, but they aren't needed for this tutorial. Let's build a representation of this
+		machine in Java, keeping the original music-making functionality. And let's call it
+		<span class="bold">BeatBuilder</span>, because it builds beats and alliteration is always advantageous.				
+		And while we are at it, let's add some new features-
+
+		<br/><br/><span class="tab"></span>		
+		<span class="bold">&#9733; Timed sound playing:</span> The sounds will play to a looping beat.
+		<br/><br/><span class="tab"></span>		
+		<span class="bold">&#9733; Automatic sound loading:</span> The program will automatically import sound files for each row of buttons.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+
+		This is what the finished program will look like. I could not get my screen recorder to
+		play nicely with Java's audio library, so I unfortunately can't show you the sound effects being played.
+	    </p>
+
+	    
+	    <div class="singleElement imageContainer medImage">
+		<img src="" 
+		th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/gif12.gif' }"
+		class="img-fluid lazy"></img>
+		<p>
+		    Each <span class="bold">column</span> corresponds with a single beat in the measure.
+		    Each <span class="bold">row</span> corresponds to a different sound effect. 
+		    Pressing a button will activate it, making a sound play when 
+		    the line passes over it.
+		</p>
+	    </div>
+
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		BeatBuilder class
+	    </p>
+
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Like the last post, let's begin by creating the interface. 
+		Add the <span class="bold">BeatBuilder</span> file in your IDE and copy in the code below.
+
+	    </p>
+
+	    <!--Code-->
+	    <div id="code0_h" class="codeHead">
+		<button
+		    id="code0_b0"
+		    onclick="hideOrShowCode('code0', 'code0_h', 'code0_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    create <span>BeatBuilder.java</span>
+		</p>
+	    </div>
+	    <pre id="code0" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+import javax.swing.BoxLayout;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.awt.event.ActionEvent;
+import java.io.File;
+import java.net.URL;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+
+public class BeatBuilder extends JFrame implements ActionListener {
+
+    static final int beatsPerMeasure = 4;
+    static final int soundsPerColumn = 2;
+
+    static final float lengthOfMeasureInSeconds = 2f;
+    static float currentProgressOfMeasure = 0f;
+
+    // The timers that handle the redrawing / measure progression
+    Timer beatTimer = new Timer();
+    Timer drawTimer = new Timer();
+
+    // The masterPanel is the highest-level UI element. It contains the button grid and time tracker
+    JPanel masterPanel = new JPanel();
+
+    // Another JPanel is needed to hold the buttons in an organized box
+    JPanel buttonGridPanel = new JPanel();
+    
+    JButton[][] buttonArray = new JButton[beatsPerMeasure][soundsPerColumn];
+
+    TimeDisplay timeDisplay = new TimeDisplay();
+
+    public BeatBuilder() {
+
+	super();
+
+	setupGUI();
+
+	drawTimer.scheduleAtFixedRate(new TimerTask() {
+
+	    @Override
+	    public void run() {
+		timeDisplay.repaint();
+	    }
+	}, 0, (long) 40);
+
+	beatTimer.scheduleAtFixedRate(new TimerTask() {
+
+	    int beatNumber = 0;
+
+	    @Override
+	    public void run() {
+
+		
+	    }
+	}, 0, 1);
+
+    }
+
+    private void setupGUI() {
+
+	// Create the master layout
+	BoxLayout boxLayout = new BoxLayout(masterPanel, BoxLayout.Y_AXIS);
+	masterPanel.setLayout(boxLayout);
+
+	// Create the buttons and grid layout
+	GridLayout gridLayout = new GridLayout(soundsPerColumn, beatsPerMeasure, 15, 15);
+	buttonGridPanel.setLayout(gridLayout);
+	buttonGridPanel.setBackground(Color.DARK_GRAY);
+
+	for (int yLoop = 0; yLoop &lt; soundsPerColumn; yLoop++) {
+	    for (int xLoop = 0; xLoop &lt; beatsPerMeasure; xLoop++) {
+
+		// Giving the buttons a name is not normally necessary, but in this case the name is used to identify the action to take when the button is pressed
+		// Note: When adding things to some Layouts, the order you add things will determine the order they are presented
+		String buttonName = xLoop + "_" + yLoop;
+		buttonArray[xLoop][yLoop] = new JButton();
+		buttonArray[xLoop][yLoop].setName(buttonName);
+		buttonArray[xLoop][yLoop].setBackground(Color.WHITE);
+		buttonArray[xLoop][yLoop].setOpaque(true);
+		buttonArray[xLoop][yLoop].setBorderPainted(false);
+		buttonArray[xLoop][yLoop].addActionListener(this);
+		buttonArray[xLoop][yLoop].setText("Sound" + yLoop);
+		buttonGridPanel.add(buttonArray[xLoop][yLoop]);
+	    }
+	}
+
+	masterPanel.add(buttonGridPanel);
+	this.add(masterPanel);
+
+	timeDisplay.setSize(900, 100);
+	masterPanel.add(timeDisplay);
+
+	// Finalize the program window and make viewable		
+	this.pack();
+	this.setSize(900, 500);
+	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	this.setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+	// Determine the XY index of the pressed button
+	JButton buttonPressed = (JButton) e.getSource();
+	String[] coordsString = buttonPressed.getName().split("_");
+	int xIndex = Integer.parseInt(coordsString[0]);
+	int yIndex = Integer.parseInt(coordsString[1]);
+
+	System.out.println("row: " + xIndex + ", column: " + yIndex + " pressed");
+    }
+
+    public static void main(String[] args) {
+	new BeatBuilder();
+    }
+
+}
+	    </pre>
+
+	    <!--Header-->
+	    <p class="singleElement miniHead">
+		How it works
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		There is a lot to cover here. Like the PhysSim, the main controller class both extends <span class="bold">JFrame</span> and 
+		implements a <span class="bold">Listener</span>. User interaction will be done by clicking 
+		on JButtons, not the mouse, so an <span class="bold">ActionListener</span> is used instead 
+		of a MouseListener.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		The <span class="bold">Constructor</span> first creates the interface by calling
+		the <span class="bold">setupGUI</span> method. Inside this method, a BoxLayout object 
+		is created to organize all components. Then a GridLayout is created to hold the grid of JButtons.
+		Next, the individual JButtons are declared, initialized, configured, and added to 
+		their containing JPanel.
+		An important step in this process is to assign each
+		JButton a <span class="bold">name</span>. 
+		The name is not the text displayed on the button- 
+		that is set with the setText method. Instead, each button’s
+		name will be used when the program needs to determine which <span class="bold">activated 
+		    buttons</span> correspond to which <span class="bold">Sound effect</span> to play, as well as which <span class="bold">beat of the measure</span> to play it on.
+		Notice that each button’s name consists of an <span class="bold">X</span> and <span class="bold">Y</span> coordinate, separated with an underscore. 
+
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		There is also an <span class="bold">actionPerformed</span> method already implemented, which is triggered by
+		pressing any of the buttons. But it doesn't do anything useful yet besides verify that the 
+		buttons have correctly-configured <span class="bold">ActionListeners</span>.
+	    </p>
+
+	    <!--Header-->
+	    <p class="singleElement miniHead">
+		Its objects and variables
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		Now, look at what this class owns.
+		<br/><br/>
+		There are two timers used by this program- 
+		The <span class="bold">BeatTimer</span> will be executed 1000 times per second, and each time it will increment the
+		<span class="bold">currentProgressOfMeasure</span> value by .001. <br/>
+		The <span class="bold">drawTimer</span> will execute 25 times per second. It is only responsible for re-rendering the 
+		The <span class="bold">TimeDisplay</span>, a class we will add in a moment.
+	    </p>
+
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		There are also GUI components already declared.
+		The <span class="bold">masterPanel</span> is a <span class="bold">JPanel</span>, which contains/organizes other components. 
+		The <span class="bold">buttonGridPanel</span> is also a <span class="bold">JPanel</span>, and is used to hold the grid of buttons. 
+		<span class="bold">buttonArray</span> is a <span class="bold">2D array</span> of <span class="bold">JButtons</span>. Notice that the
+		dimensions of this array are (beatsPerMeasure X soundsPerColumn)
+
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		<span class="bold">lengthOfMeasureInSeconds</span> is, obviously, how long a single measure lasts. It is a fixed value 
+		when the program is running, which is why it has the attribute <span class="bold">final</span>
+	    </p>
+
+	    <!--Header-->
+	    <p class="singleElement miniHead">
+		beatsPerMeasure &amp; soundsPerColumn
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		There are two especially significant variables- 
+		<span class="bold">beatsPerMeasure</span> and <span class="bold">soundsPerColumn</span>.
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		These two variables have considerably more responsibility than the others, 
+		as they will be used in the timing function, in spacing out the buttons, in 
+		rendering the white &amp; yellow lines…
+	    </p>
+	    
+	    <div class="singleElement imageContainer medImage">
+		<img src="" 
+		th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic2.png' }"
+		class="img-fluid lazy"></img>
+		<p>This is the results of a “Find Usages” search I performed on the final 
+		    code for these two variables. There are 18 usages in only about 300 lines of code-
+		</p>
+	    </div>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		By changing the <span class="bold">beatsPerMeasure</span> and <span class="bold">soundsPerColumn</span>
+		variables,  the behavior of many parts of
+		the program should automatically adjust.
+		This is done with
+		<span class="bold">references</span> to the variables, instead of
+		<span class="bold">hardcoding</span> values.
+	    </p>
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		TimeDisplay class
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		The <span class="bold">TimeDisplay</span> class is updated 25 times a second, and it's job is to display the
+		time progress of the measure. Add it into the same directory as the BeatBuilder class
+
+	    </p>
+
+	    <!--Code-->
+	    <div id="code1_h" class="codeHead">
+		<button
+		    id="code1_b0"
+		    onclick="hideOrShowCode('code1', 'code1_h', 'code1_b0')">
+		    Show / Hide
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		    create <span>TimeDisplay.java</span>
+		</p>
+	    </div>
+	    <pre id="code1" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
+import javax.swing.JComponent;
+
+class TimeDisplay extends JComponent {
+
+    @Override
+    public void paintComponent(Graphics g) {
+
+	Graphics2D g2 = (Graphics2D) g;
+
+	// Get references to BeatBuilder Class's variables
+	int beatsPerMeasure = BeatBuilder.beatsPerMeasure;
+	float lengthOfMeasureInSeconds = BeatBuilder.lengthOfMeasureInSeconds;
+	float currentProgressOfMeasure = BeatBuilder.currentProgressOfMeasure;
+
+	// Draw the background
+	g2.setColor(Color.DARK_GRAY);
+	g2.fillRect(0, 0, 10000, 10000);
+
+	// Draw the moving bar
+	int pixelPositionOfBar = (int) (this.getWidth() * (currentProgressOfMeasure / lengthOfMeasureInSeconds));
+	int heightOfDrawBar = (int) (this.getHeight() * 0.8f);
+	
+ 	Stroke stroke = new BasicStroke(4, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL);
+	Color yellow = Color.decode("#EAC338");
+	
+	g2.setStroke(stroke);
+	g2.setColor(yellow);
+	g2.drawLine(pixelPositionOfBar, 0, pixelPositionOfBar, heightOfDrawBar);
+
+	// Draw the measure bars
+	g2.setColor(Color.WHITE);
+	int yOffset = (int) (this.getHeight() * 0.2f);
+	for (int loop = 0; loop &lt; beatsPerMeasure; loop++) {
+
+	    int xPositionToDraw = (int) (this.getWidth() * (loop / (float) beatsPerMeasure));
+	    g2.drawLine(xPositionToDraw, heightOfDrawBar, xPositionToDraw, yOffset);
+	}
+    }
+}</pre>
+
+	<!--Header-->
+	<p class="singleElement miniHead">
+	    Test run
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Run the program. You should see a grid of buttons. When you grab the corner
+	    of the window and change it's size, notice how the <span class="bold">GridLayout</span> of the 
+	    <span class="bold">JPanel</span> responds by keeping the buttons uniform and orderly.
+
+	</p>
+
+	<div class="singleElement imageContainer bigImage">
+	    <img src="" 
+	    th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/gif13.gif' }"
+	    class="img-fluid lazy"></img>
+	    <p>The GUI is about completed, but there is no useful functionality yet.</p>
+	</div>
+
+	<!--Seperator-->
+	<div class="singleElement sep"></div>
+
+	<!--Header-->
+	<p class="singleElement head">
+	    JButton Interaction
+	</p>
+
+	<!--Code-->
+	<div id="code2_h" class="codeHead">
+	    <button
+		id="code2_b0"
+		onclick="hideOrShowCode('code2', 'code2_h', 'code2_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		from <span>BeatBuilder.java</span>
+	    </p>
+	</div>
+	<pre id="code2" class="singleElement code prettyprint linenums:106" style="padding-left: 0;">
+@Override
+public void actionPerformed(ActionEvent e) {
+
+    // Determine the XY index of the pressed button
+    JButton buttonPressed = (JButton) e.getSource();
+    String[] coordsString = buttonPressed.getName().split("_");
+    int xIndex = Integer.parseInt(coordsString[0]);
+    int yIndex = Integer.parseInt(coordsString[1]);
+
+    System.out.println("row: " + xIndex + ", column: " + yIndex + " pressed");
+}
+
+	</pre>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    When any button in the grid is pressed, the <span class="bold">actionPerformed</span> method is executed. 
+	    The first thing we do is determine <span class="italics">which</span> button was pressed.
+	    We do this with a reference to the pressed button. It is returned by
+	    calling <span class="bold">getSource</span> on the <span class="bold">actionEvent object</span>, then casting it to a JButton.
+	    <br/><span class="tab"></span>
+	    Remember that when each button was created, it was given a <span class="bold">name</span> 
+	    (A <span class="bold">String</span> in which that button's <span class="bold">X</span> and <span class="bold">Y</span>
+	    coordinates are stored). Those coordinates can be determined by splitting the name at the underscore and parsing each
+	    String value to a number. 
+
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Buttons are activated by pressing them, and deactivated by pressing them again. This
+	    type of off/on state should be represented with a <span class="bold">boolean</span>.
+	    <br/><span class="tab"></span>
+	    If there is a <span class="bold">boolean</span> assigned to each button in the grid, it could keep track of which
+	    buttons are activated. The best way to structure this <span class="bold">Boolean array</span> is to mirror the 
+	    structure the booleans need to associate with- a 2D grid of buttons. So a 2D array of Booleans can be
+	    used.
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Place this array inside the BeatBuilder class
+	</p>
+
+
+	<!--Code-->
+	<div id="code3_h" class="codeHead">
+	    <button
+		id="code3_b0"
+		onclick="hideOrShowCode('code3', 'code3_h', 'code3_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		add to <span>BeatBuilder.java</span>
+	    </p>
+	</div>
+	<pre id="code3" class="singleElement code prettyprint linenums:36" style="padding-left: 0;">
+static boolean[][] activatedButtons = new boolean[beatsPerMeasure][soundsPerColumn];
+	</pre>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Next, the boolean values need to be changed when a button is pressed.
+	    Replace the <span class="bold">actionPerformed</span> method with this
+	</p>
+
+
+	<!--Code-->
+	<div id="code4_h" class="codeHead">
+	    <button
+		id="code4_b0"
+		onclick="hideOrShowCode('code4', 'code4_h', 'code4_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		replace inside <span>BeatBuilder.java</span>
+	    </p>
+	</div>
+	<pre id="code4" class="singleElement code prettyprint linenums:106" style="padding-left: 0;">
+
+@Override
+public void actionPerformed(ActionEvent e) {
+
+    // Determine the XY index of the pressed button
+    JButton buttonPressed = (JButton) e.getSource();
+    String[] coordsString = buttonPressed.getName().split("_");
+    int xIndex = Integer.parseInt(coordsString[0]);
+    int yIndex = Integer.parseInt(coordsString[1]);
+
+    // flip the value in the activatedButtons array
+    boolean boolValue = activatedButtons[xIndex][yIndex];
+    boolValue = !boolValue;
+    activatedButtons[xIndex][yIndex] = boolValue;
+
+    // Change the color of the button
+    if (boolValue) {
+	Color yellow = Color.decode("#EAC338");
+	buttonArray[xIndex][yIndex].setBackground(yellow);
+    } else {
+	buttonArray[xIndex][yIndex].setBackground(Color.WHITE);
+    }
+
+    String isActivated = activatedButtons[xIndex][yIndex] ? "activated" : "deactivated";
+    System.out.println("row: " + yIndex + ", column: " + xIndex + " is "+ isActivated);
+}
+	</pre>
+
+	<!--Header-->
+	<p class="singleElement miniHead">
+	    Test run
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Run the program, press the buttons, and observer the console. It should behave like this.
+	</p>
+	
+	<div class="singleElement imageContainer smallImage">
+	    <img src="" 
+	    th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/gif14.gif' }"
+	    class="img-fluid lazy"></img>
+	</div>
+
+	<!--Seperator-->
+	<div class="singleElement sep"></div>
+
+
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Unlike the PhysSim examples, the BeatBuilder uses <span class="bold">2</span> timers- One for updating 
+	    the rendering, one for audio timing. Could I have used just one timer 
+	    to handle both? Yes- But I chose not to in order to better illustrate an 
+	    important point. Let me rant for a moment…
+	</p>
+
+	<!--Header-->
+	<p class="singleElement head">
+	    Rant about Threads
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    One concept that all programmers need to eventually tackle is the idea of <span class="bold">Threading</span>.
+	    A single CPU core can only handle one instruction at a time, and virtually any computer is
+	    guaranteed to have more <span class="bold">concurrent instructions to execute</span> than it has
+	    <span class="bold">CPUs to handle them</span>. To 
+	    remedy this, a program's instructions can be seperated into <span class="bold">threads</span>, individual ribbons of operations to handle,
+	    and they all take turns being operated. That’s how your 4-core notebook can handle 20 open
+	    applications and hundreds of background processes at the same time- each set of instructions waits 
+	    patiently for a CPU to make it’s rounds.
+	    <br/><span class="tab"></span>
+	    What I've just described also applied to a <span class="bold">process</span>. I want to keep things simple, but
+	    I don't want to give misleading information. 
+	    <a href="https://stackoverflow.com/questions/200469/what-is-the-difference-between-a-process-and-a-thread">
+		This StackOverflow post should clarify better.
+	    </a>
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    One measure of a computer's power is through Floating Point Operations Per Second (FLOPS).
+	    Modern computers are measured in the Gigahertz, (<span class="italics">Billions</span> of
+	    mathematical operations per second), so our CPU’s have the muscle to handle many many
+	    threads at once. <span class="bold">Unless…</span>
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    This happens all the time- A program suddenly demands more resources than the computer can instantly provide, be it
+	    <span class="italics">memory space</span> or 
+	    <span class="italics">Hard drive reading / writing</span> or <span class="italics">bandwidth usage</span>.
+	    <br/><span class="tab"></span>
+	    The program can generally handle this in two different ways: 
+	    <span class="bold">gracefully</span> or <span class="bold">not so much</span>.
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Let’s say your computer is running a program that demands a very high number of math operations. 
+	    Maybe you are editing HD video and every pixel needs to be modified several times, or you are processing
+	    a very large chunk of data in Microsoft Excel, or you are playing a graphically-ambitious video game 
+	    whose designers saw fit to include a 512x512 normal map for every f***ing tree leaf.
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Waiting <span class="bold">gracefully</span> is when we see a loading icon or spinning beach ball 
+	    (<span class="italics">Visual confirmation of the task</span>). 
+	    We can still move the mouse around the 
+	    screen (<span class="italics">GUI is still responsive</span>). We can click on our other open programs and 
+	    use those while we wait (<span class="italics">OS is still free to execute other tasks</span>). We are patient, 
+	    because we know our lil’ CPU is trying it’s darndest.
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    <span class="bold">Not so gracefully</span> is when there is no visual indication of what the program is
+	    trying to do, the mouse won’t move, buttons do nothing, and the computer’s fan starts
+	    spinning really fast to keep the CPU from thinking itself to death. We, the user, have no idea
+	    what is causing the program to stall, nor any idea how long it will take to resume.
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Your programs are more likely to behave <span class="bold">ungracefully</span> if you run the 
+	    entire program in a <span class="bold">single thread</span>. That single thread would be responsible
+	    for updating your program’s GUI, accepting input, handling network connections, 
+	    and any other work your program needs. As soon as one of those tasks needs more 
+	    resources than can be instantly given, every other task on that thread gets clogged.
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    <span class="bold">By deault</span>, most code you write will execute in a single Thread. You may use prewritten 
+	    code that automatically spawns new Threads for certain tasks- for example, a code library
+	    used for connecting to the internet might generate two new Threads, one for sending and 
+	    one for receiving data.
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    You may also manually spawn your own threads. Different languages have different methods 
+	    of doing this. In Java, there are several ways- you can find them 
+	    in the article linked below.
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Using multiple threads incorrectly introduces a new dimension of potential problems- 
+	    what happens if one threads wants to <span class="bold">read</span> a certain memory
+	    address at the same time as another thread is trying to 
+	    <span class="bold">write</span> to it. 
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    <span class="italics">ANYWAY</span>, back to the point- earlier, I said that the BeatBuilder 
+	    will use two timers, one for rendering the timeTracker and one 
+	    for triggering a sound. This 
+	    is because each <span class="bold">TimerTask</span> will
+	    spawn it’s own <span class="bold">Thread</span>. 
+	    <br/><span class="tab"></span>These two Threads are <span class="italics">functionally</span> together,
+	    (they can both access the same shared variables, execute the same methods...). But they
+	    are <span class="italics">logically</span> seperated, and any hangup in one won't effect the other.
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    The BeatBuilder is a very simple program. Cramming all it's operations into a single Thread
+	    probably wouldn't cause any issues. But it's always a good idea to practice multithreading.
+	    Just keep in mind that some Threads, like the
+	    one created by TimerTasks, are created <span class="italics">implicitly</span>.
+
+
+	    <br/><br/>
+	    <a href="https://www.javatpoint.com/multithreading-in-java">
+		For more info about Java Threads, go here.
+	    </a>
+
+	</p>
+
+	<!--Header-->
+	<p class="singleElement head">
+	    End Rant
+	</p>
+
+
+
+	<div class="sep"></div>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    <span class="italics">Visually</span>, our work is about done. <span class="italics">Logically</span>, 
+	    there are 2 more steps to perform.
+	    <br/><br/>
+	    &#9733; The program needs to trigger a method call at the <span class="bold">proper time</span>: 
+	    IE, when the blue bar passes over a column of buttons. 
+	    <br/><br/>
+	    &#9733; The program needs to <span class="bold">load</span> a set of sound effects 
+	    from disk, <span class="bold">hold</span> them in memory, and <span class="bold">play</span> them on command.
+	</p>
+
+
+	<!--Header-->
+	<p class="singleElement head">
+	    Loading / Playing audio files
+	</p>
+
+	<!--Code-->
+	<div id="code5_h" class="codeHead">
+	    <button
+		id="code5_b0"
+		onclick="hideOrShowCode('code5', 'code5_h', 'code5_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		create <span>MyAudioPlayer.java</span>
+	    </p>
+	</div>
+	<pre id="code5" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+
+import java.io.IOException;
+import java.net.URL;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+public class MyAudioPlayer {
+
+    public Clip clip;
+    private URL url;
+
+    public MyAudioPlayer(URL url) {
+	this.url = url;
+    }
+
+    // this method must be called after creation on each AudioPlayer object.
+    protected void prepare() throws IOException, LineUnavailableException, UnsupportedAudioFileException {
+
+	// load the sound into memory with the Clip object
+	AudioInputStream inputStream = AudioSystem.getAudioInputStream(url.openStream());
+	DataLine.Info info = new DataLine.Info(Clip.class, inputStream.getFormat());
+	clip = (Clip) AudioSystem.getLine(info);
+	clip.open(inputStream);
+    }
+
+    public void play() throws IOException, LineUnavailableException, UnsupportedAudioFileException {
+
+	clip.setFramePosition(0);
+	clip.start();
+    }
+
+    public void cleanupBeforeProgramExit() {
+
+	if (clip != null) {
+	    clip.stop();
+	    clip.flush();
+	}
+    }
+}
+	</pre>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    As I mentioned before, Java isn't the best at handling Audio. I spent way more time than I’d like to 
+	    admit getting this class to work, and it’s still loaded with kinks. For one, it can only play
+	    the obsolete .wav format of audio. Additionally, each <span class="bold">MyAudioPlayer</span> can only handle playing a
+	    single sound, which means we will need a MyAudioPlayer instance for each button.
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    While this wastes memory, as each sound file will need to be loaded 
+	    multiple times, it gives us the opportunity to use the familiar 2D array again. Add this array to 
+	    the <span class="bold">BeatBuilder</span> class.
+	</p>
+
+	<div id="code6_h" class="codeHead">
+	    <button
+		id="code6_b0"
+		onclick="hideOrShowCode('code6', 'code6_h', 'code6_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		add to <span>BeatBuilder.java</span>
+	    </p>
+	</div>
+	<pre id="code6" class="singleElement code prettyprint linenums:38" style="padding-left: 0;">
+MyAudioPlayer[][] playerArray = new MyAudioPlayer[beatsPerMeasure][soundsPerColumn];	    
+	</pre>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Like the other arrays used by this program, they need to populated with 
+	    objects before they can be used. Add this method to the <span class="bold">BeatBuilder</span> class.
+	</p>
+
+
+	<div id="code7_h" class="codeHead">
+	    <button
+		id="code7_b0"
+		onclick="hideOrShowCode('code7', 'code7_h', 'code7_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		add to <span>BeatBuilder.java</span>
+	    </p>
+	</div>
+	<pre id="code7" class="singleElement code prettyprint linenums:110" style="padding-left: 0;">
+private void loadSoundFiles() {
+
+    File file;
+    for (int loop = 0; loop &lt; soundsPerColumn; loop++) {
+
+	URL url = this.getClass().getResource("sound" + (loop) + ".wav");
+	file = new File(url.getFile());
+
+	if (file.exists()) {
+
+	    for (int loop2 = 0; loop2 &lt; beatsPerMeasure; loop2++) {
+
+		try {
+
+		    playerArray[loop2][loop] = new MyAudioPlayer(file.toURI().toURL());
+		    playerArray[loop2][loop].prepare();
+		    System.out.println("loaded file: (" + url + ") into index: " + loop2 + "," + loop);
+
+		} catch (Exception e) {
+		    System.out.println(e);
+		}
+	    }
+	} else {
+
+	    System.out.println("File sound" + (loop) + ".wav does not exist");
+	}
+    }
+}
+	</pre>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    This method has several responsibilities. First, it checks if the expected audio files exist- 
+	    Those files need to be in the same folder as the BeatBuilder file and they 
+	    need to follow the naming format of “sound0.wav”, “sound1.wav”, “sound2.wav” etc. 		
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    If those files exist, a new <span class="bold">MyAudioPlayer</span> is created for every beat, and 
+	    that MyAudioPlayer loads the audio data with the
+	    <span class="bold">prepare</span> method. If the files don’t exist, the program 
+	    <span class="bold">fails gracefully</span>: The program is still responsive, just with 
+	    no sounds to play.		
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Call the loadSoundFiles from the Constructor <span class="bold">after</span>
+	    you call <span class="bold">setupGUI()</span>, as the
+	    button array references in <span class="bold">loadSoundFiles</span> are initialized in setupGUI().
+	</p>
+
+
+
+	<div id="code8_h" class="codeHead">
+	    <button
+		id="code8_b0"
+		onclick="hideOrShowCode('code8', 'code8_h', 'code8_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		add to <span>BeatBuilder.java</span>
+	    </p>
+	</div>
+	<pre id="code8" class="singleElement code prettyprint linenums:48" style="padding-left: 0;">
+loadSoundFiles();
+	</pre>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Run the program- this is what you should see in the console
+	</p>
+	
+	<div class="singleElement imageContainer bigImage">
+	    <img src="" 
+	    th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic5.png' }"
+	    class="img-fluid lazy"></img>
+	</div>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    If the sounds cannot load correctly, it is probably because Java can't find them. Make sure your files all reside inside the
+	    same package, like this.
+	</p>
+
+	<div class="singleElement imageContainer smallImage">
+	    <img src="" 
+	    th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic4.png' }"
+	    class="img-fluid lazy"></img>
+	</div>
+
+
+	<!--Header-->
+	<p class="singleElement head">
+	    Timing a Method Call to the Beat
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Since we know how long it takes to complete one measure (with the <span class="bold">lengthOfMeasureInSeconds</span> value)
+	    and we know how many beats are in a measure (with <span class="bold">beatsPerMeasure</span>), it’s easy to 
+	    determine exactly when each beat occurs. The variable <span class="bold">currentProgressOfMeasure</span>
+	    is incremented by a value of (1 / 1000), 1000 times a second. Rounding errors will 
+	    exist but are negligible for this example.
+	</p>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Add the <span class="bold">beatHit</span> method to <span class="bold">BeatBuilder</span>
+	</p>
+
+	<div id="code9_h" class="codeHead">
+	    <button
+		id="code9_b0"
+		onclick="hideOrShowCode('code9', 'code9_h', 'code9_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		add to <span>BeatBuilder.java</span>
+	    </p>
+	</div>
+	<pre id="code9" class="singleElement code prettyprint linenums:141" style="padding-left: 0;">
+private void beatHit(int beatNumber) {
+
+    for (int yLoop = 0; yLoop &lt; soundsPerColumn; yLoop++) {
+
+	if (activatedButtons[beatNumber][yLoop] &amp;&amp; playerArray[beatNumber][yLoop] != null) {
+
+	    try {
+		playerArray[beatNumber][yLoop].play();
+
+	    } catch (Exception ex) {
+		System.out.println(ex);
+	    }
+	}
+    }
+}</pre>
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    The <span class="bold">beatHit</span> method now needs to be triggered at 
+	    the correct time. The <span class="bold">beatTimer</span> will handle this-
+	    Inside the <span class="bold">constructor’s beatTimer’s Timertask</span>,
+	    Replace the <span class="bold">run</span> method with this
+	</p>
+
+	<div id="code10_h" class="codeHead">
+	    <button
+		id="code10_b0"
+		    onclick="hideOrShowCode('code10', 'code10_h', 'code10_b0')">
+		Show / Hide
+	    </button>
+	    <button class="button_minimizeCode"
+		    onclick="changeCodeStyle()">
+		Swap Colors
+	    </button>
+	    <p>
+		replace inside <span>BeatBuilder.java</span>
+	    </p>
+	</div>
+	<pre id="code10" class="singleElement code prettyprint linenums:62" style="padding-left: 0;">
+@Override
+public void run() {
+
+    // Increment the current progress of the measure bar, 
+    currentProgressOfMeasure += (1f / 1000f);
+
+    // Reset the measure if necessary
+    if (currentProgressOfMeasure &gt; lengthOfMeasureInSeconds) {
+
+	currentProgressOfMeasure = 0;
+	beatNumber = 0;
+    }
+
+    // Trigger the beatHit method
+    if ((int) (currentProgressOfMeasure * beatsPerMeasure / lengthOfMeasureInSeconds) &gt; beatNumber - 1) {
+
+	beatNumber++;
+	beatHit(beatNumber - 1);
+    }
+}
+	</pre>
+
+
+	<!--Paragraph-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    <span class="bold">And we are done!</span> Run the program and press the buttons. 
+	    If the files are in the right directory
+	    and the code was copied correctly, you should hear a sound playing when the ticker bar passes an 
+	    activated button.
+	</p>
+
+	<!--Header-->
+	<p class="singleElement miniHead">
+
+	    How the audio works
+	</p>
+
+	<!--Para-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    The <span class="bold">MyAudioPlayer</span> class we created only owns 2 objects- a 
+	    <span class="bold">URL</span> to locate the file that
+	    containts audio data, and a <span class="bold">Clip</span> object to hold that audio data in memory.
+	</p>
+
+	<!--Para-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    The <span class="bold">Clip</span> class is comes from the 
+	    <span class="bold">Javax.sound.sampled</span> library. It it is part of a family of 
+	    classes that all inherit from the <span class="bold">Line</span> class.
+	</p>
+	
+	<div class="singleElement imageContainer smallImage">
+	    <img src="" 
+	    th:attr="data-src=*{ '../../images/Tutorials/' + tutorialId + '/pic10.jpg' }"
+	    class="img-fluid lazy"></img>
+	    	    <p>Class structure that the <span class="bold">Clip</span> is part of. Some of the other classes will be used
+		in later posts to add more audio capabilities.</p>
+	</div>
+
+	<!--Para-->
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    Keep in mind that a new <span class="bold">CustomAudioPlayer</span> is created 
+	    (beatsPerMeasure X rowsPerMeasure) times, and each CustomAudioPlayer instance has a Clip instance. And since each row only plays the same sound, we
+	    are loading and storing each sound an unnecessary (beatsPerMeasure - 1) times.
+	    <br/><span class="tab"></span> Why is it done this way? After all, the 
+	    <span class="bold">CustomAudioPlayer.play()</span> method resets the audio data with the 
+	    <span class="bold">clip.setFramePosition(0);</span> command,
+	    so couldn't a single sound effect be used for each row and played repeatedly? 
+	    <br/><span class="tab"></span> <span class="bold">Yes</span>, but it would limit the capabilities of the program.
+	    If someone wanted to switch from 0.5 second drum hits to longer sound effects, each sound might only be able to play 
+	    for a single beat before it is reset by the next activated beat. And high BPMs would prevent even
+	    short sound effects, like drum hits, to play in sequence correctly. 
+	</p>
+
+	<p class="singleElement para">
+	    <span class="tab"></span>
+	    If we make software, we don't want the software's <span class="bold">users</span>, who
+	    have no idea of your code's internal treachery- to feel artificially limited. In other words, 
+	    anything you make should work across a diverse set of use- To function correctly, fast and slow, with
+	    any WAV sound file.
+	    <br/><span class="tab"></span>
+	    Does it the BeatBuilder <span class="bold">work</span>? Yea- 
+	    but it could work <span class="bold">better</span>. In part 2, instead of reading
+	    audio data from a file, we will create it from scratch and send it directly to the 
+	    <span class="bold">SourceDataLine</span>, which is in the same class tree as the <span class="bold">Clip</span>
+	</p>
+	
+	<a class="singleElement link mouseoverHighlight1" 
+	   href='/Tutorials/SinWaveAudio' 
+	   target="blank">
+	    <img src="../../images/Tutorials/SinWaveAudio/preview.png">   
+	    <span> Java Jams: Sin Waves, Streams, and Byte Buffers </span>
+	</a>
+	
+
+	<div class="signature">
+	    by Davis Burnside
+	    <br/>
+	    Posted Feb 5 2018
+	</div>
+
+    </div>
+</div>

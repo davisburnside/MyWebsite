@@ -1,0 +1,293 @@
+<div th:id="${tutorialId}" class="contentContainer stripedBorder">
+    
+	<div id="articleContent">
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		Arduino 3-player reflex game
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		I've been looking forward to making an Arduino post for a while, but I couldn't settle
+		on an idea that would be simple to reproduce with common parts. But a few days ago I was
+		playing keep-away with my roommates dog and I realized... everybody loves a reflex game- even dogs.
+		<br/><span class="tab"></span>
+		The Arduino would be the perfect hardware platform for a reflex game. Its clock speed is
+		fast enough to handle split-second logic decisions, and the software / hardware 
+		would it extremely simple to make. ([Input] is handled by buttons and a vibration sensor,
+		[output] is handled with LEDs).
+
+	    </p>
+
+	    <!--Paragraph-->
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		Here is a video of it in action. When the blue LED is on, the Arduino listens for a vibration,
+		which is triggered by dropping an object on the table. When the vibration sensor is tripped, the yellow
+		light activates, and the first person to press their
+		button wins- but if a button is pressed before the sensor is triggered, that player is disqualified
+		for the round. Press the Reset button (sticking straight up, out of view) and everybody is ready to play again.
+
+	    </p>
+
+	    <div class="iframeContainterDiv"
+		 style="width: 580px;">
+		<iframe 
+		    style="text-align:center;"
+		    width="560" 
+		    height="315" 
+		    src="https://www.youtube.com/embed/l-d4C34r-Kk" 
+		    frameborder="0" 
+		    allow="autoplay; encrypted-media" 
+		    allowfullscreen="true">
+		</iframe>
+	    </div>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		I was really dreading having to draw-out the circuit diagrams for this post, but I found a 
+		(really cool) website that not only lets you drag-and-drop all the physical components,
+		but you can run code on a virtualized arduino too! 
+		<a href="https://www.tinkercad.com/things/9fSLeXs1oCg-reflexgamearduino/editel"> 
+		    You can view / modify the entire virtualized end result here.
+		</a> 
+
+	    </p>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		For all the Arduino posts I make, I will assume you have wires, a breadboard
+		to make the connections, and the device itself. I am using the Uno R3, which is about $15 new.
+		The rest of the hardware needed for this comes with almost every Arduino starter kit, which you can get 
+		fairly cheaply. 
+		<br/><span class="tab"></span>
+		I will also assume you have the Arduino's [IDE], 
+		<a href="https://www.arduino.cc/en/Main/Software"> 
+		    which you can download for free from the Arduino website.
+		</a> 	
+
+	    </p>
+
+
+	    <!--Header-->
+	    <p class="singleElement head">
+		How does it work?
+	    </p>
+
+	    <!--Header-->
+	    <p class="singleElement miniHead">
+		Step 1: The piezo 
+	    </p>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		Vibration is detected with a [piezoelectric] sensor. When the sensor is disturbed, it generates
+		a small voltage difference between it's two terminals. The Arduino can sense this voltage if the
+		circuit is wired correctly.
+
+	    </p>
+
+	    <!--	    Image
+			<div class="singleElement img img_small">
+			    <img src="../../images/articles/ArduinoReflex/pic7.jpg" 
+				 class="img-fluid"></img>
+			    <p>
+				<a href="https://youtu.be/qun4HYWeOBg"> 
+				    This video by tbg3tbg3
+				</a> 	
+				gives a good example on the operation of a Piezo.
+			    </p>
+			</div>-->
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		If you are following along, wire up the Arduino and breadboard like this. Note that all
+		[Black] wires are those connected to ground.
+	    </p>
+
+
+	    <!--Image-->
+	    <div class="singleElement img img_med">
+		<img src="../../images/articles/ArduinoReflex/pic4.png" 
+		     class="img-fluid"></img>
+	    </div>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		The Piezo has 2 terminals. One is connected to ground, the other is connected
+		to port A0. The A0-A6 ports are [Analog ports], so they
+		can detect any voltage between 0 and 5 volts, while the [Digital] ports can only
+		detect voltage-high or voltage-low.
+		<br/><span class="tab"></span>
+		A 1 million Ohm resistor allows the Piezo's value to be read clearly. (To be honest,
+		I had to look up someone else's guide to wire the Piezo correctly)
+	    </p>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		To get a good understanding how it will read the Piezo, run this mini
+		program on your Arduino.
+	    </p>
+
+	    <!--Code-->
+	    <div id="code0_h" class="codeHead">
+		<button
+		    id="code0_b0"
+		    onclick="hideOrShowCode('code0', 'code0_h', 'code0_b0')">
+		    Minimize
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		</p>
+	    </div>
+	    <pre id="code0" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+int piezoPin = A0;
+double voltageThreshold = 0.05;
+
+void setup() {
+
+  pinMode(piezoPin, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+
+    // Read the value of the Piezo
+    int piezoADC = analogRead(piezoPin);
+    float piezoV = piezoADC / 1023.0 * 5.0;
+
+    // If the value exceeds the threshold, output to the console
+    if (piezoV >= voltageThreshold) {
+
+      String statement = "Hit detected with voltage:  " + String(piezoV);
+      Serial.println(statement);
+    }
+
+    delay(50);
+}
+	    </pre>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+		If you tap the Piezo with your finger, the Arduino should read a voltage of around 0.2 V or so.
+		Hitting it harder will momentarily read a higher voltage, up to 5V
+		Since this exceeds the [voltageThreshold] value, the IDE's console should display a message.
+	    </p>
+
+	    <!--Header-->
+	    <p class="singleElement miniHead">
+		Step 2: Game Logic
+	    </p>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		The Piezo is an example of [physical logic].
+		But almost all of the
+		work is done by this device is through [virtual logic]- 
+		the code running inside the Arduino. 
+		The Arduino's usefulness comes from it's ability to seamlessly mix physical and virtual logic, to allow real-world
+		interaction to control software and vice versa.
+		<br/><span class="tab"></span>
+		The rest of the interaction comes only from the few buttons used by this program
+		and the colored LEDs that show the Game State. Everything else about the [Game State] will be held
+		in software.
+	    </p>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		[Make sure the Arduino is powered off], then
+		add the following components to the circuit. Step 1's Piezo and wires are not shown,
+		but don't remove them.
+	    </p>
+
+	    <!--Image-->
+	    <div class="singleElement img img_med">
+		<img src="../../images/articles/ArduinoReflex/pic2.png" 
+		     class="img-fluid"></img>
+	    </div>
+
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		The recommended max current through an Arduino port is around 20 milliamps. When a digital port is set
+		to output a current with the [digitalWrite] command, it does so at [5 Volts].
+		<a href="https://www.rapidtables.com/electric/ohms-law.html"> 
+		    5 Volts = 0.02 Amps * 250 Ohms, 
+		</a> so a resistor of around 250 Ohms is between the digital port and ground. A more-common 220 Ohm
+		resistor (Stripe pattern: Red Red Brown) will do the trick just fine though.
+
+	    </p>
+
+	    	    <!--Code-->
+	    <div id="code1_h" class="codeHead">
+		<button
+		    id="code1_b0"
+		    onclick="hideOrShowCode('code1', 'code1_h', 'code1_b0')">
+		    Minimize
+		</button>
+		<button class="button_minimizeCode"
+			onclick="changeCodeStyle()">
+		    Swap Colors
+		</button>
+		<p>
+		</p>
+	    </div>
+	    <pre id="code1" class="singleElement code prettyprint linenums" style="padding-left: 0;">
+
+	    </pre>
+	    
+	    <p class="singleElement para">
+		<span class="tab"></span>
+
+		Why doesn't the [button] need a resistor, you might ask? 
+
+	    </p>
+
+	    <!--	    <p class="singleElement para">
+			    <span class="tab"></span>
+			    Some people prefer [physical] over virtual- something palpable and concrete, where
+			    one can interpret it's operation with all their senses. When a real-world machine is
+			    running, one can get a sense of how it operates through many physical interactions.
+			    The whirrs and buzzes it eminates, the vibrations it sends into
+			    your bones. [Physical feedback] 
+	    
+			</p>-->
+
+	    <!--Header-->
+	    <p class="singleElement miniHead">
+		Step 3: Player Interaction
+	    </p>
+
+	    <div class="row">
+		<div class="col-md-6">
+		    <div class="singleElement img img_med">
+			<img src="../../images/articles/ArduinoReflex/pic1.png" 
+			     class="img-fluid"></img>
+		    </div>
+
+		</div>
+		<div class="col-md-6">
+		    <div class="singleElement img img_med">
+			<img src="../../images/articles/ArduinoReflex/pic5.jpg" 
+			     class="img-fluid"></img>
+		    </div>
+
+		</div>
+
+
+	    </div>
+
+	</div>
+</div>

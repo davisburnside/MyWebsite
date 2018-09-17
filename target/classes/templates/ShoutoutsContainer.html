@@ -1,0 +1,43 @@
+<div id="shoutoutsContainer" class="contentContainer stripedBorder" style="display:none;">
+
+    <div class="infoBar">
+	<span> Other cool stuff </span>
+    </div>
+
+    <div class="row stuffBox" 
+	 th:each="shoutout : ${shoutoutArray}">
+
+	<div>
+	    <img class="cornerBevelTL noDrag" src="../../images/cornerTriangleSmallTL.png"/>
+
+	    <div class="bigLink">
+		<a class='mouseoverHighlight1 pointerCursor' th:href="${shoutout.mainLink}" target="_blank">		    	    
+		    <div class=" col-sm-3 col-xs-12">
+			<div class='shoutoutImageWrapper'>
+			    <img th:attr="src=${ '../../images/External/' + shoutout.photoName }"
+				 </img>		
+			</div>
+		    </div>
+
+		    <div class=" col-sm-9 col-xs-12">	
+			<h1 th:utext="${shoutout.name}"/>
+			<p th:utext="${shoutout.desc}"/>
+		    </div>	    
+		</a>
+	    </div>
+	</div>
+
+	<div class="col-xs-12 fav3links">
+	    <div class="row">
+		<a class="col-xs-12 col-sm-4 favLink" th:href="${shoutout.favLink1}" th:text='${shoutout.favName1}' target="_blank">
+		</a>
+		<a class="col-xs-12 col-sm-4 favLink" th:href="${shoutout.favLink2}" th:text='${shoutout.favName2}' target="_blank">
+		</a>
+		<a class="col-xs-12 col-sm-4 favLink" th:href="${shoutout.favLink3}" th:text='${shoutout.favName3}' target="_blank">
+		</a>
+	    </div>
+	</div>
+
+    </div>
+
+</div>
