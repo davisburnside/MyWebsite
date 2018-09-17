@@ -11,19 +11,14 @@
 }
 
 .iframeContainterDiv{
-
-
     position: relative;
-    padding-bottom: 56.25%; /* 16:9 */
+    padding-bottom: 56.25%;
     padding-top: 25px;
     height: 0;
     max-width: 100%;
-
-    /*padding: 5px;*/
     border:1px solid grey;
     border-radius: 15px;
     margin: 0 auto;
-    /*box-shadow: 0px 0px 15px -5px grey;*/
 }
 
 .iframeContainterDiv iframe{
@@ -35,7 +30,6 @@
 }
 
 .codeHead{
-
     height: auto;
     background-color: #555555;
     margin-bottom: 0px;
@@ -165,7 +159,6 @@
     padding-right: 60px;
 }
 .italics{
-
     font-style: italic;
 }
 .bold{

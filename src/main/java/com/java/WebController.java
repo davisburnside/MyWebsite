@@ -1,4 +1,4 @@
-package com.example;
+package com.java;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;

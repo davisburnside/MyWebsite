@@ -4,8 +4,6 @@ var currentPage = '';
 
 var slideDuration = 300;
 
-
-
 $(document).ready(function () {
 
     // The ready() function is also called after AJAX load() completions.
@@ -115,14 +113,6 @@ function addLazy() {
 
 		// for artwork images, add shadow
 		$(element).addClass("imageShadow");
-
-//		// If the artwork has associated products, add the product bar shimmer effect
-//		var parent = $(element).parent();
-//		if ($(parent).find(".productCategories").length > 0) {
-//
-//		    var productBar = $(parent).find(".productCategories")[0];
-//		    console.log(productBar.scrollTop);
-//		}
 	    }
 	},
 	onError: function (element) {
@@ -130,7 +120,7 @@ function addLazy() {
 	    console.log('image "' + imageSrc + '" could not be loaded');
 	},
 	onFinishedAll: function () {
-//		    console.log('finished loading all images');
+//	    console.log('finished loading all images');
 	}
     });
 
@@ -146,6 +136,7 @@ function addPrettyCode() {
     stylesheet_light.disabled = true;
 }
 
+// instead of Media Queries, use JS to handle complex resize animations
 function determineCondenseLevel() {
 
     if ($(window).width() >= 768) {
@@ -156,7 +147,6 @@ function determineCondenseLevel() {
 	return 2;
     }
 }
-
 function condenseToCorrectLevel() {
 
     if (determineCondenseLevel() == 0 && condenseLevel != 0) {
@@ -164,7 +154,6 @@ function condenseToCorrectLevel() {
 	if (condenseLevel == -1) {
 	    $("#mainHeader").velocity({top: "0px"}, 300);
 	}
-
 
 	$("#cornerTriangle").velocity({top: "0px", left: "0px"}, 300);
 	$("#headerBarButtonContainer").fadeIn(300);

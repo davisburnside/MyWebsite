@@ -57,8 +57,9 @@ var options = {
 }
 
 var productDictionary = new Map();
-function loadProductScripts() {
 
+function populateProductDictionary(){
+    
     // Aegean Friday
     productDictionary.set(1524406124603, 'product-component-83d4308a58b');
     productDictionary.set(1524419919931, 'product-component-f47c125a5b7');
@@ -82,9 +83,9 @@ function loadProductScripts() {
     productDictionary.set(1530020921403, 'product-component-685560044f0');
     
 
+}
 
-
-
+function loadProductScripts() {
 
     var scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js';
     if (window.ShopifyBuy) {
@@ -106,6 +107,9 @@ function loadProductScripts() {
     }
 
     function ShopifyBuyInit() {
+	
+	populateProductDictionary();
+	
 	var client = ShopifyBuy.buildClient({
 	    domain: 'burnside-art.myshopify.com',
 	    storefrontAccessToken: '0a8cb41225ab0c4a6f599cda5ec1eeb9',
@@ -126,7 +130,6 @@ function loadProductScripts() {
 	});
     }
 }
-
 
 function showProductInfo(id, category) {
 
@@ -192,5 +195,4 @@ function showProductInfo(id, category) {
 	}
     }
 
-}
-		
+}		

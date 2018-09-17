@@ -1,5 +1,5 @@
 
-package com.example;
+package com.java;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +12,7 @@ public class ContentBean {
     @Bean
     ArrayList<HashMap<String, Object>> getArtworkArray() {
 	
+	// Template for products
 //	productCategories = new HashMap<String, ArrayList<String>>();
 //	clothingProducts = new ArrayList<String>();
 //	clothingProducts.add("");
@@ -59,7 +60,7 @@ public class ContentBean {
 	productCategories.put("other", otherProducts);
 	productCategories.put("clothing", clothingProducts);
 	productCategories.put("decor", decorProducts);
-	map.put("productCategories", productCategories);
+//	map.put("productCategories", productCategories);
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -115,7 +116,7 @@ public class ContentBean {
 	productCategories.put("clothing", clothingProducts);
 	productCategories.put("decor", decorProducts);
 	productCategories.put("other", otherProducts);
-	map.put("productCategories", productCategories);
+//	map.put("productCategories", productCategories);
 	artworkArray.add(map);
 
 	map = new HashMap<>();

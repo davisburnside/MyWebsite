@@ -79,12 +79,11 @@ function loadContainer(contentUrl, containerDivId, animationLength) {
 	    if (contentUrl == "/Components/Art") {
 
 		$(".shopify-buy-frame").show(200);
-		loadProductScripts();
+//		loadProductScripts();
 
 	    } else {
 		$(".shopify-buy-frame").hide(200);
 		addPrettyCode();
-//		getScrollCheckpoints();
 	    }
 	    
 	    addLazy();
