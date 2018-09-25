@@ -59,7 +59,10 @@
     background-repeat: no-repeat;
     background-size:auto 100% !important;
 }
+
 .productDropdownContainer{
+    padding-bottom: 20px;
+    padding-top: 20px;
     max-width: 1000px;
     z-index: 90;
     margin:-4px auto 0 auto !important;
@@ -75,8 +78,8 @@
 }
 
 .shopify-buy-frame{
-    margin-top: 40px;
-    margin-bottom: 40px;
+    margin-top: 0px;
+    margin-bottom: 0px;
 }
 
 .shopify-buy__product__variant-img{
@@ -142,4 +145,9 @@
 	font-size: 30px;
     }
 
+    .productDropdownContainer .col-xs-12{
+	
+	padding-bottom: 10px;
+	border-bottom: 2px solid grey;
+    }
 }

@@ -3,7 +3,7 @@ server:
 
 spring:
   thymeleaf:
-    cache: true
+    cache: false
     check-template: true
     check-template-location: true
     content-type: text/html

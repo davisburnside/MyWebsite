@@ -1,4 +1,3 @@
-
 package com.java;
 
 import java.util.ArrayList;
@@ -8,11 +7,14 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ContentBean {
-    
+
     @Bean
     ArrayList<HashMap<String, Object>> getArtworkArray() {
-	
+
 	// Template for products
+//	map.put("id", "");
+//	map.put("idAlt", "''");
+//	map.put("categoryButtonWidth", "col-sm-6");
 //	productCategories = new HashMap<String, ArrayList<String>>();
 //	clothingProducts = new ArrayList<String>();
 //	clothingProducts.add("");
@@ -31,7 +33,6 @@ public class ContentBean {
 //	productCategories.put("other", otherProducts);
 //	map.put("productCategories", productCategories);
 //	artworkArray.add(map);
-
 	ArrayList<HashMap<String, Object>> artworkArray = new ArrayList<>();
 
 	HashMap<String, Object> map = new HashMap<>();
@@ -44,23 +45,19 @@ public class ContentBean {
 		+ "ancient vessels now exist to let wealthy tourists cruise the sea in the fashion of their ancestors.");
 	map.put("id", "AegeanFriday");
 	map.put("idAlt", "'AegeanFriday'");
+	map.put("categoryButtonWidth", "col-sm-6");
 	HashMap<String, ArrayList<String>> productCategories = new HashMap<String, ArrayList<String>>();
-	ArrayList<String> clothingProducts = new ArrayList<String>();
-	clothingProducts.add("product-component-83d4308a58b");
-	clothingProducts.add("product-component-f47c125a5b7");
-	clothingProducts.add("product-component-cbaf86a411b");
 	ArrayList<String> decorProducts = new ArrayList<String>();
-	decorProducts.add("product-component-71cc3c0aac7");
-	decorProducts.add("product-component-234bbd3a138");
-	decorProducts.add("product-component-b695b96dba2");
+	decorProducts.add("AegeanFriday-product-component-0e88e36e04c");
+	decorProducts.add("AegeanFriday-product-component-7fefe318481");
+	decorProducts.add("AegeanFriday-product-component-432b98937bf");
 	ArrayList<String> otherProducts = new ArrayList<String>();
-	otherProducts.add("product-component-498f2c5530b");
-	otherProducts.add("product-component-90fcb857ef1");
-	otherProducts.add("product-component-32336f125b0");
+	otherProducts.add("AegeanFriday-product-component-c231a2306e2");
+	otherProducts.add("AegeanFriday-product-component-fca6a488571");
+	otherProducts.add("AegeanFriday-product-component-c4160a03d6f");
 	productCategories.put("other", otherProducts);
-	productCategories.put("clothing", clothingProducts);
 	productCategories.put("decor", decorProducts);
-//	map.put("productCategories", productCategories);
+	map.put("productCategories", productCategories);
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -69,6 +66,21 @@ public class ContentBean {
 	map.put("dimensions", "40x30'");
 	map.put("medium", "Oil on canvas");
 	map.put("desc", "Mesa College in San Diego was a great school to attend. I wanted something to remember it by.");
+	map.put("id", "Mesa");
+	map.put("idAlt", "'Mesa'");
+	map.put("categoryButtonWidth", "col-sm-6");
+	productCategories = new HashMap<String, ArrayList<String>>();
+	decorProducts = new ArrayList<String>();
+	decorProducts.add("Mesa-product-component-76747c47bbd");
+	decorProducts.add("Mesa-product-component-b2f58506cc1");
+	decorProducts.add("Mesa-product-component-6ced2accf48");
+	otherProducts = new ArrayList<String>();
+	otherProducts.add("Mesa-product-component-5e27dfe8416");
+	otherProducts.add("Mesa-product-component-3a5ddc1261a");
+	otherProducts.add("Mesa-product-component-1867df84a11");
+	productCategories.put("other", otherProducts);
+	productCategories.put("decor", decorProducts);
+	map.put("productCategories", productCategories);
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -79,7 +91,16 @@ public class ContentBean {
 	map.put("desc", "While on a run through some hills, I discovered a worn-down classic car with flat tires, sitting dormant"
 		+ " against the curb. The paint that wasn't overtaken by rust "
 		+ "was a brilliant green. I had to restore it to its former glory- in a picture, at least.");
-
+	map.put("id", "Emeralds");
+	map.put("idAlt", "'Emeralds'");
+	map.put("categoryButtonWidth", "col-sm-12");
+	productCategories = new HashMap<String, ArrayList<String>>();
+	decorProducts = new ArrayList<String>();
+	decorProducts.add("Emeralds-product-component-7dffe27f64f");
+	decorProducts.add("Emeralds-product-component-0caa6ba6a6a");
+	decorProducts.add("Emeralds-product-component-c3cd4d3a6a8");
+	productCategories.put("decor", decorProducts);
+	map.put("productCategories", productCategories);
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -88,6 +109,15 @@ public class ContentBean {
 	map.put("dimensions", "2x2'");
 	map.put("medium", "Oil on canvas");
 	map.put("desc", "Sometimes the must mundane, forgettable scenes make the most interesting things to paint.");
+	map.put("id", "CaliforniaSunday");
+	map.put("idAlt", "'CaliforniaSunday'");
+	map.put("categoryButtonWidth", "col-sm-12");
+	productCategories = new HashMap<String, ArrayList<String>>();
+	decorProducts = new ArrayList<String>();
+	decorProducts.add("CaliforniaSunday-product-component-d5c02bb61cf");
+	decorProducts.add("CaliforniaSunday-product-component-84d5623e2f2");
+	productCategories.put("decor", decorProducts);
+	map.put("productCategories", productCategories);
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -98,25 +128,21 @@ public class ContentBean {
 	map.put("desc", "Colonel Balloonaparte's battlefield prowess was the stuff of legends. By age 12 he popped his "
 		+ "first foe, and by 14 had conquered the entire Eastern hemisphere. His life was tragically cut short at the age of 23, "
 		+ "when he sat too close to a candle.");
-		map.put("id", "VeniVidiVici");
+	map.put("id", "VeniVidiVici");
 	map.put("idAlt", "'VeniVidiVici'");
+	map.put("categoryButtonWidth", "col-sm-6");
 	productCategories = new HashMap<String, ArrayList<String>>();
-	clothingProducts = new ArrayList<String>();
-	clothingProducts.add("product-component-6fd2e1a259f");
-	clothingProducts.add("product-component-5ef2c2bcabb");
-	clothingProducts.add("product-component-5b1094967a8");
 	decorProducts = new ArrayList<String>();
-	decorProducts.add("product-component-87a1f6e4fc0");
-	decorProducts.add("product-component-0a356cf1b95");
-	decorProducts.add("product-component-b5d4546458f");
+	decorProducts.add("VeniVidiVici-product-component-d94977d5233");
+	decorProducts.add("VeniVidiVici-product-component-2872cdfbcf5");
+	decorProducts.add("VeniVidiVici-product-component-224c1f506fe");	
 	otherProducts = new ArrayList<String>();
-	otherProducts.add("product-component-a5ad3048e91");
-	otherProducts.add("product-component-2f7a1b3c141");
-	otherProducts.add("product-component-685560044f0");
-	productCategories.put("clothing", clothingProducts);
+	otherProducts.add("VeniVidiVici-product-component-cd2902b2f22");
+	otherProducts.add("VeniVidiVici-product-component-1180a5fa105");
+	otherProducts.add("VeniVidiVici-product-component-f08756c2b0d");
 	productCategories.put("decor", decorProducts);
 	productCategories.put("other", otherProducts);
-//	map.put("productCategories", productCategories);
+	map.put("productCategories", productCategories);
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -127,6 +153,20 @@ public class ContentBean {
 	map.put("desc", "On the right are masculine thoughts- rigid, sturdy and serial. The thoughts on the left are feminine- flowing, flexible, and parallel. "
 		+ "Below are the Earthly limits and pains placed on us, and above is the world we all aspire for but is beyond our comprehension."
 		+ " In the middle, your referee silently watches the games that are played between all sides.");
+	map.put("id", "WKPHS");
+	map.put("idAlt", "'WKPHS'");
+	map.put("categoryButtonWidth", "col-sm-6");
+	productCategories = new HashMap<String, ArrayList<String>>();
+	decorProducts = new ArrayList<String>();
+	decorProducts.add("WKPHS-product-component-bdb23d55300");
+	decorProducts.add("WKPHS-product-component-00f31666ab9");
+	decorProducts.add("WKPHS-product-component-52338cc5773");
+	otherProducts = new ArrayList<String>();
+	otherProducts.add("WKPHS-product-component-7cd22b7ebea");
+	otherProducts.add("WKPHS-product-component-e03e7d1fa1f");
+	productCategories.put("decor", decorProducts);
+	productCategories.put("other", otherProducts);
+	map.put("productCategories", productCategories);
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -136,6 +176,16 @@ public class ContentBean {
 	map.put("medium", "Expensive ass paint on canvas");
 	map.put("desc", "It is pretty rare that I mix exactly the amount of paint I need."
 		+ "");
+	map.put("id", "LEAP");
+	map.put("idAlt", "'LEAP'");
+	map.put("categoryButtonWidth", "col-sm-12");
+	productCategories = new HashMap<String, ArrayList<String>>();
+	decorProducts = new ArrayList<String>();
+	decorProducts.add("LEAP-product-component-cf71512f0da");
+	decorProducts.add("LEAP-product-component-215e69b2baa");
+	decorProducts.add("LEAP-product-component-c59a7d2e481");	
+	productCategories.put("decor", decorProducts);
+	map.put("productCategories", productCategories);
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -144,6 +194,16 @@ public class ContentBean {
 	map.put("dimensions", "16x20\"");
 	map.put("medium", "Oil on canvas");
 	map.put("desc", "This was the first painting I made for a long time. It is kinda my 'calibration'- where I relearned color mixing, blending, and textures.");
+	map.put("id", "LucidLiving");
+	map.put("idAlt", "'LucidLiving'");
+	map.put("categoryButtonWidth", "col-sm-12");
+	productCategories = new HashMap<String, ArrayList<String>>();
+	decorProducts = new ArrayList<String>();
+	decorProducts.add("LucidLiving-product-component-61ede623a05");
+	decorProducts.add("LucidLiving-product-component-d0192805f59");
+	decorProducts.add("LucidLiving-product-component-dcefc5711a3");
+	productCategories.put("decor", decorProducts);
+	map.put("productCategories", productCategories);
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -154,23 +214,43 @@ public class ContentBean {
 	map.put("desc", "Another everyday scene that I felt compelled to paint. The radio tower stood like a giant above me. I imagined the endless stream of data"
 		+ " it was listening for and spitting back out. The specks of information flow like a river through it, coursing through the clouds to make their way to"
 		+ " my phone so I can ask google where to find chinese food.");
+	map.put("id", "CloudComputing");
+	map.put("idAlt", "'CloudComputing'");
+	map.put("categoryButtonWidth", "col-sm-12");
+	productCategories = new HashMap<String, ArrayList<String>>();
+	decorProducts = new ArrayList<String>();
+	decorProducts.add("CloudComputing-product-component-70e4aea8748");
+	decorProducts.add("CloudComputing-product-component-d3b6c95e8b4");
+	decorProducts.add("CloudComputing-product-component-3fc2debb5ea");			
+	productCategories.put("decor", decorProducts);
+	map.put("productCategories", productCategories);
 	artworkArray.add(map);
-
-
-	map = new HashMap<>();
-//	map.put("id", "2");
-	map.put("filename", "J-min.JPG");
-	map.put("name", "J");
-	map.put("dimensions", "27x20\"");
-	map.put("medium", "Pencil");
-	artworkArray.add(map);
-
 
 	map = new HashMap<>();
 	map.put("filename", "DropsInTheOcean-min.JPG");
 	map.put("name", "Drops in the Ocean");
 	map.put("dimensions", "27x20\"");
 	map.put("medium", "Pencil");
+	    map.put("id", "DropsInTheOcean");
+	map.put("idAlt", "'DropsInTheOcean'");
+	map.put("categoryButtonWidth", "col-sm-6");
+	productCategories = new HashMap<String, ArrayList<String>>();	
+	decorProducts = new ArrayList<String>();
+	decorProducts.add("DropsInTheOcean-product-component-f4290ab499e");
+	decorProducts.add("DropsInTheOcean-product-component-0999f67ab2d"); 
+	decorProducts.add("DropsInTheOcean-product-component-d2da0bb4ad2");
+	otherProducts = new ArrayList<String>();
+	otherProducts.add("DropsInTheOcean-product-component-2c091bee7b6");
+	otherProducts.add("DropsInTheOcean-product-component-b84cd095a74");
+	otherProducts.add("DropsInTheOcean-product-component-0b203d343a1");
+//	clothingProducts = new ArrayList<String>();
+//	clothingProducts.add("product-component-252d3b435e0");
+//	clothingProducts.add("");
+//	clothingProducts.add("");
+	productCategories.put("decor", decorProducts);
+	productCategories.put("other", otherProducts);
+//	productCategories.put("clothing", clothingProducts);
+	map.put("productCategories", productCategories);
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -178,7 +258,31 @@ public class ContentBean {
 	map.put("name", "Why Hello There");
 	map.put("dimensions", "27x20\"");
 	map.put("medium", "Pen");
-	map.put("infoBreak", " ");
+	map.put("id", "WhyHelloThere");
+	map.put("idAlt", "'WhyHelloThere'");
+	map.put("categoryButtonWidth", "col-sm-6");
+	productCategories = new HashMap<String, ArrayList<String>>();	
+	decorProducts = new ArrayList<String>();
+	decorProducts.add("WhyHelloThere-product-component-ff4028879e7");
+	decorProducts.add("WhyHelloThere-product-component-ff943a30c7e");
+	decorProducts.add("WhyHelloThere-product-component-f953c95162e");
+	otherProducts = new ArrayList<String>();
+	otherProducts.add("WhyHelloThere-product-component-d5210ec99c0");
+	otherProducts.add("WhyHelloThere-product-component-e282a313bb2");
+	otherProducts.add("WhyHelloThere-product-component-9a10c9e10b0");
+	productCategories.put("decor", decorProducts);
+	productCategories.put("other", otherProducts);
+	map.put("productCategories", productCategories);
+	artworkArray.add(map);
+	
+	map = new HashMap<>();
+//	map.put("id", "2");
+	map.put("filename", "J-min.JPG");
+	map.put("name", "J");
+	map.put("dimensions", "27x20\"");
+	map.put("medium", "Pencil");
+	map.put("id", "");
+	map.put("idAlt", "''");
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -186,6 +290,8 @@ public class ContentBean {
 	map.put("name", "Sparks");
 	map.put("dimensions", "18x12\"");
 	map.put("medium", "Pastel and Cardboard");
+	map.put("id", "");
+	map.put("idAlt", "''");
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -193,6 +299,8 @@ public class ContentBean {
 	map.put("name", "Pipes");
 	map.put("dimensions", "18x12\"");
 	map.put("medium", "Pastel");
+	map.put("id", "");
+	map.put("idAlt", "''");
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -200,6 +308,8 @@ public class ContentBean {
 	map.put("name", "Branches");
 	map.put("dimensions", "27x18\"");
 	map.put("medium", "Colored Pencil");
+	map.put("id", "");
+	map.put("idAlt", "''");
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -207,6 +317,8 @@ public class ContentBean {
 	map.put("name", "Corn");
 	map.put("dimensions", "27x18\"");
 	map.put("medium", "Charcoal");
+	map.put("id", "");
+	map.put("idAlt", "''");
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -214,6 +326,8 @@ public class ContentBean {
 	map.put("name", "Picking the Lock");
 	map.put("dimensions", "11x8.5");
 	map.put("medium", "Marker and Colored Pencil");
+	map.put("id", "");
+	map.put("idAlt", "''");
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -221,6 +335,8 @@ public class ContentBean {
 	map.put("name", "Early for Work");
 	map.put("dimensions", "11x14");
 	map.put("medium", "Colored Pencil");
+	map.put("id", "");
+	map.put("idAlt", "''");
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -228,6 +344,8 @@ public class ContentBean {
 	map.put("name", "The Wonderful World / 1950");
 	map.put("dimensions", "10x16");
 	map.put("medium", "Colored Pencil");
+	map.put("id", "");
+	map.put("idAlt", "''");
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -235,6 +353,8 @@ public class ContentBean {
 	map.put("name", "Melt");
 	map.put("dimensions", "11x8.5");
 	map.put("medium", "Marker and Colored Pencil");
+	map.put("id", "");
+	map.put("idAlt", "''");
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -242,6 +362,8 @@ public class ContentBean {
 	map.put("name", "Getting Started");
 	map.put("dimensions", "27x18\"");
 	map.put("medium", "Charcoal");
+	map.put("id", "");
+	map.put("idAlt", "''");
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -249,6 +371,8 @@ public class ContentBean {
 	map.put("name", "Wasted Paper");
 	map.put("dimensions", "10x8");
 	map.put("medium", "Marker");
+	map.put("id", "");
+	map.put("idAlt", "''");
 	artworkArray.add(map);
 
 	map = new HashMap<>();
@@ -256,6 +380,8 @@ public class ContentBean {
 	map.put("name", "Smoke");
 	map.put("dimensions", "10x14\"");
 	map.put("medium", "Pencil");
+	map.put("id", "");
+	map.put("idAlt", "''");
 	artworkArray.add(map);
 
 	return artworkArray;
@@ -301,7 +427,6 @@ public class ContentBean {
 	map.put("title", "Physics-based 2D game in Java, Pt 1");
 	map.put("desc", "Create a rudimentary physics engine with collision detection and use it to power a tiny 2D game. No outside code libraries are needed.");
 	tutorialsArray.add(map);
-
 
 	return tutorialsArray;
     }

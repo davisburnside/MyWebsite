@@ -75,7 +75,6 @@ $(window).resize(function () {
     condenseToCorrectLevel();
 });
 
-
 $(window).on('popstate', function () {
 
     var previousUrl = window.location.pathname;
@@ -104,15 +103,33 @@ function addLazy() {
 	effectTime: 500,
 	threshold: 400,
 	beforeLoad: function (element) {
-//	    var imageSrc = element.data('src');
-//	    console.log('image "' + imageSrc + '" is about to be loaded');
+	    
+	    // Only artwork images with associated shopify products are given names. 
+	    // load the products only after the image is loaded.
+	    var elementName = $(element).attr("name");
+	    if (elementName != null){
+		
+		console.log("name " + elementName);
+		var associatedProducts = getAllProductsWithPrefixId(elementName);
+		
+		loadProductScripts(associatedProducts);
+		
+		
+		
+	    }
 	},
 	afterLoad: function (element) {
+	    
+	    var elementName = $(element).attr("name");
+	    if (elementName != null){
+		$("#productContainer" + elementName).show(200);
+	    }
 
+	    // Add shadows to all artwork images
 	    if ($(element).hasClass("artworkObjectImage")) {
 
 		// for artwork images, add shadow
-		$(element).addClass("imageShadow");
+		$(element).addClass("imageShadow");		
 	    }
 	},
 	onError: function (element) {

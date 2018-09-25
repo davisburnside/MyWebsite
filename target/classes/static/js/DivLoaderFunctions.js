@@ -79,7 +79,7 @@ function loadContainer(contentUrl, containerDivId, animationLength) {
 	    if (contentUrl == "/Components/Art") {
 
 		$(".shopify-buy-frame").show(200);
-//		loadProductScripts();
+		$(".productCategories").hide(0);
 
 	    } else {
 		$(".shopify-buy-frame").hide(200);

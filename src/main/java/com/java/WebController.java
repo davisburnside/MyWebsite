@@ -90,6 +90,13 @@ public class WebController implements ErrorController {
 	return "ContactContainer";
     }
 
+    // Features testing page
+    @GetMapping("/testing/shopify")
+    public String featuresTestingPage(Model model) {
+	model.addAttribute("currentPage", "contact");
+	return "featuresTesting";
+    }
+    
     // Error mapping
     private static final String errorPath = "/error";
     @RequestMapping(value = errorPath)

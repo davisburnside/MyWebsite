@@ -210,7 +210,7 @@ a:visited{
     margin: 15px auto 20px auto;
     object-fit:scale-down;
     max-width: 100%;
-    max-height: 100vh;
+    max-height: 90vh;
 
 }
 .artworkObjectImage.imageShadow{   
